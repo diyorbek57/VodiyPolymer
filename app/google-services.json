@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "179377764678",
+    "firebase_url": "https://vodiy-polymer-default-rtdb.firebaseio.com",
+    "project_id": "vodiy-polymer",
+    "storage_bucket": "vodiy-polymer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179377764678:android:204265f99c43244299cd47",
+        "android_client_info": {
+          "package_name": "com.ayizor.vodiypolymer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179377764678-qfj9i5purncs5qoan80oujqqgeericsc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ayizor.vodiypolymer",
+            "certificate_hash": "b76b9731d5eaacf21214261f8f9b3576be034402"
+          }
+        },
+        {
+          "client_id": "179377764678-ihq0aat43ll6lfv5lavnq0k7r10md07s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3hzkTFTnwUKT2cpoM6MTYY1q48k1BpN8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "179377764678-ihq0aat43ll6lfv5lavnq0k7r10md07s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

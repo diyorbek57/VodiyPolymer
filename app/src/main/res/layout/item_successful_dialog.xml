@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    app:cardElevation="0dp"
+    app:cardCornerRadius="15dp"
+    android:layout_margin="15dp"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="30dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:adjustViewBounds="true"
+            android:background="@color/very_dark_gray_mostly_black"
+            android:scaleType="center"
+            android:src="@drawable/ic_location_bold"
+            app:shapeAppearanceOverlay="@style/circler_imageView" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/generalsans_semibold"
+            android:text="Title"
+            android:textColor="@color/very_dark_gray_mostly_black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/montserrat_regular"
+            android:maxLines="1"
+            android:text="Description"
+            android:textColor="@color/very_dark_gray_mostly_black"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btn_view_order"
+            android:fontFamily="@font/generalsans_semibold"
+            android:textAllCaps="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/item_circular_button_background"
+            android:text="@string/view_order" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

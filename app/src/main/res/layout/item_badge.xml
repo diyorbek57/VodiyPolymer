@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/toolbar_badge_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_shopping_cart_line" />
+
+    <TextView
+        android:layout_marginStart="15dp"
+        android:id="@+id/toolbar_badge_count"
+        style="@style/MenuDrawer.Widget.MenuBadgeCount"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:background="@drawable/item_badge_background" />
+
+</FrameLayout>
