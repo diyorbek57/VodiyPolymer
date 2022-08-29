@@ -75,6 +75,7 @@ class DetailsActivity : BaseActivity() {
             binding.quantityStepper.value.toString(),
             product.product_discount,
             product.product_image, false,
+            0,
             Utils.getCurrentTime(),
             Utils.getCurrentTime()
         )

@@ -1,4 +1,4 @@
-package com.ayizor.vodiypolymer.activity
+package com.ayizor.vodiypolymer.fragment
 
 
 import android.annotation.SuppressLint
@@ -22,11 +22,11 @@ import com.ayizor.vodiypolymer.utils.Utils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-class CheckoutActivity : Fragment() {
+class CheckoutFragment : Fragment() {
 
     lateinit var binding: ActivityCheckoutBinding
-    val TAG: String = CheckoutActivity::class.java.simpleName
-    private val args: CheckoutActivityArgs by navArgs()
+    val TAG: String = CheckoutFragment::class.java.simpleName
+    private val args: CheckoutFragmentArgs by navArgs()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,8 +39,6 @@ class CheckoutActivity : Fragment() {
 
 
     private fun getOrderList() {
-        val navBar = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-        navBar.visibility = View.GONE
         refreshCartAdapter(args.orderList.ordersList)
     }
 

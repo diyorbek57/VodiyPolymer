@@ -8,14 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ayizor.afeme.utils.Logger
-import com.ayizor.vodiypolymer.activity.CheckoutActivity
 import com.ayizor.vodiypolymer.activity.ShippingAddressActivity
 import com.ayizor.vodiypolymer.adapter.CartAdapter
 import com.ayizor.vodiypolymer.databinding.FragmentCartBinding
 import com.ayizor.vodiypolymer.manager.UserPrefManager
 import com.ayizor.vodiypolymer.model.Order
+import com.ayizor.vodiypolymer.model.listmodel.OrdersList
 import com.google.firebase.database.*
 import com.google.firebase.database.annotations.NotNull
 import java.io.Serializable
@@ -47,11 +48,9 @@ class CartFragment : Fragment() {
 
         binding.btnCheckout.setOnClickListener {
             if (!UserPrefManager(requireContext()).loadUser().user_location?.get(0)?.location_id.isNullOrEmpty()) {
-                val intent = Intent(requireContext(), CheckoutActivity::class.java)
-                val args = Bundle()
-                args.putSerializable("ORDERLIST", productsList as Serializable)
-                intent.putExtra("list", args)
-                startActivity(intent)
+                val orders= OrdersList(productsList)
+                val action = CartFragmentDirections.actionNavCartToCheckoutActivity(orders)
+                findNavController().navigate(action)
 
             } else {
                 val intent = Intent(requireContext(), ShippingAddressActivity::class.java)
@@ -107,6 +106,7 @@ class CartFragment : Fragment() {
 
     private fun getTotalPrice(products: ArrayList<Order>) {
         Logger.e(TAG, "getTotalPrice")
+        totalPrice=0
         for (i in 0 until products.size) {
 
             val price = products[i].product_total_price
@@ -116,7 +116,7 @@ class CartFragment : Fragment() {
             }
             Logger.e(TAG, totalPrice.toString())
         }
-        binding.tvTotalPrice.text = totalPrice.toString()
+        binding.tvTotalPrice.text = totalPrice.toString()+" So'm"
 
     }
 

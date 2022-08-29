@@ -97,7 +97,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/generalsans_semibold"
-                android:text="275"
                 android:textAlignment="center"
                 android:textColor="@color/very_dark_gray_mostly_black"
                 android:textSize="20sp" />

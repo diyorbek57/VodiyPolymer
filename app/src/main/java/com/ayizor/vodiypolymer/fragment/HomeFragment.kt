@@ -15,21 +15,24 @@ import com.ayizor.vodiypolymer.adapter.CategoryAdapter
 import com.ayizor.vodiypolymer.adapter.ProductsAdapter
 import com.ayizor.vodiypolymer.databinding.FragmentHomeBinding
 import com.ayizor.vodiypolymer.model.Category
-import com.ayizor.vodiypolymer.model.Color
-import com.ayizor.vodiypolymer.model.Image
 import com.ayizor.vodiypolymer.model.Product
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.database.*
+import com.google.firebase.database.annotations.NotNull
 import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
 import com.youth.banner.indicator.CircleIndicator
 
 
-class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener, CategoryAdapter.OnCategoryItemClickListener {
+class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
+    CategoryAdapter.OnCategoryItemClickListener {
 
     lateinit var binding: FragmentHomeBinding
     val TAG: String = HomeFragment::class.java.simpleName
+    lateinit var product: Product
+    lateinit var category: Category
 
     //variables
     val test_image_url =
@@ -63,7 +66,7 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener, Catego
             startActivity(intent)
         }
         getDiscountProducts()
-        getProducts()
+        getProducts(null)
         getCategory()
     }
 
@@ -107,63 +110,113 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener, Catego
 
     }
 
-    private fun getProducts() {
-        val colorList: ArrayList<Color> = ArrayList()
-        colorList.add(Color("1", "FFBB86FC"))
-        colorList.add(Color("2", "FF6200EE"))
-        colorList.add(Color("3", "FF03DAC5"))
-        val productsList: ArrayList<Product> = ArrayList()
-        val imageList: ArrayList<Image> = ArrayList()
-        for (i in 0 until 5) {
-            imageList.add(Image("2", test_image_url, "0", "0"))
+    private fun getProducts(category_id: String?) {
+        if (!category_id.isNullOrEmpty()) {
+            getProductByCategory(category_id)
+        } else {
+            getAllProducts()
         }
-        for (i in 0 until 15) {
-            productsList.add(
-                Product(
-                    "1", "2", colorList, "Test",
-                    "ewgbnewigboirqwgboqriugbwriuqbfnwenweoigfyweqbofeiuwnfwieqfboiewqubg",
-                    "2000", 2.6, "13", 0, imageList, "0", "0"
-                )
-            )
-        }
-        refreshProductsAdapter(productsList)
+    }
 
+    private fun getAllProducts() {
+        val productsList: ArrayList<Product> = ArrayList()
+        val reference = FirebaseDatabase.getInstance().getReference("products")
+
+        reference.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    productsList.clear()
+                    for (userSnapshot in snapshot.children) {
+                        product = userSnapshot.getValue(Product::class.java)!!
+                        if (product != null) {
+                            productsList.add(product)
+                        }
+                    }
+
+                    refreshProductsAdapter(productsList)
+                }
+            }
+
+            override fun onCancelled(@NotNull error: DatabaseError) {}
+        })
+    }
+
+    private fun getProductByCategory(categoryId: String?) {
+        val productsList: ArrayList<Product> = ArrayList()
+        val reference = FirebaseDatabase.getInstance().getReference("products")
+        val query: Query =
+            reference.orderByChild("product_category_id")
+                .equalTo(categoryId)
+        query.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    productsList.clear()
+                    for (userSnapshot in snapshot.children) {
+                        product = userSnapshot.getValue(Product::class.java)!!
+                        if (product != null) {
+                            productsList.add(product)
+                        }
+                    }
+
+                    refreshProductsAdapter(productsList)
+                }
+            }
+
+            override fun onCancelled(@NotNull error: DatabaseError) {}
+        })
     }
 
     private fun getCategory() {
-        val categoryList: ArrayList<Category> = ArrayList()
+        val categoriesList: ArrayList<Category> = ArrayList()
+        val reference = FirebaseDatabase.getInstance().getReference("categories")
 
-        for (i in 0 until 15) {
-            categoryList.add(
-                Category(
-                    i.toString(), "0", "0"
-                )
-            )
-        }
-        refreshCategoryAdapter(categoryList)
+        reference.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    categoriesList.clear()
+                    for (userSnapshot in snapshot.children) {
+                        category = userSnapshot.getValue(Category::class.java)!!
+                        if (category != null) {
+                            categoriesList.add(category)
+                        }
+                    }
+
+                    refreshCategoryAdapter(categoriesList)
+                }
+            }
+
+            override fun onCancelled(@NotNull error: DatabaseError) {}
+        })
+
 
     }
 
     private fun getDiscountProducts() {
-        val colorList: ArrayList<Color> = ArrayList()
-        colorList.add(Color("1", "FFBB86FC"))
-        colorList.add(Color("2", "FF6200EE"))
-        colorList.add(Color("3", "FF03DAC5"))
         val productsList: ArrayList<Product> = ArrayList()
-        val imageList: ArrayList<Image> = ArrayList()
-        for (i in 0 until 5) {
-            imageList.add(Image("2", test_image_url, "0", "0"))
-        }
-        for (i in 0 until 15) {
-            productsList.add(
-                Product(
-                    "1", "2", colorList, "Test",
-                    "ewgbnewigboirqwgboqriugbwriuqbfnwenweoigfyweqbofeiuwnfwieqfboiewqubg",
-                    "2000", 2.6, "13", 0, imageList, "0", "0"
-                )
-            )
-        }
-        setupBanner(productsList)
+        val reference = FirebaseDatabase.getInstance().getReference("products")
+        val query: Query =
+            reference.orderByChild("product_discount").startAfter("0")
+        query.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    productsList.clear()
+                    for (userSnapshot in snapshot.children) {
+                        product = userSnapshot.getValue(Product::class.java)!!
+                        if (product != null) {
+                            productsList.add(product)
+                        }
+                    }
+                    setupBanner(productsList)
+                }
+            }
+
+            override fun onCancelled(@NotNull error: DatabaseError) {}
+        })
+
 
     }
 

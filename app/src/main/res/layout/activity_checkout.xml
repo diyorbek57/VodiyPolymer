@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:background="@color/very_light_gray_mostly_white"
     android:layout_height="match_parent"
-    tools:context=".activity.CheckoutActivity">
+    tools:context=".fragment.CheckoutFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"

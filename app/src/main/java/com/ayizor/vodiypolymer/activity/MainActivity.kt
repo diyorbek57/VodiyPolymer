@@ -3,6 +3,8 @@ package com.ayizor.vodiypolymer.activity
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.animation.TranslateAnimation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.ayizor.afeme.utils.Logger
@@ -67,9 +69,11 @@ class MainActivity : BaseActivity() {
 
 
                     for (userSnapshot in snapshot.children) {
-                        val user_id: String? = userSnapshot.child("user_id").getValue(String::class.java)
-                        Logger.e(TAG,user_id.toString())
-                        val user_first_name: String? = userSnapshot.child("user_first_name").getValue(String::class.java)
+                        val user_id: String? =
+                            userSnapshot.child("user_id").getValue(String::class.java)
+                        Logger.e(TAG, user_id.toString())
+                        val user_first_name: String? =
+                            userSnapshot.child("user_first_name").getValue(String::class.java)
                         val user_last_name: String? =
                             userSnapshot.child("user_last_name").getValue(String::class.java)
                         val user_company_name: String? =
@@ -150,18 +154,30 @@ class MainActivity : BaseActivity() {
             supportFragmentManager.findFragmentById(binding.navHostFragment.id) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavView.setupWithNavController(navController)
-    }
-
-    override fun onBackPressed() {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(binding.navHostFragment.id) as NavHostFragment
-        val navController = navHostFragment.navController
-        val currentDestination = navController.currentDestination
-        when (currentDestination?.id) {
-            R.id.nav_home -> {
-                finish()
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.nav_home -> showBottomNav()
+                R.id.nav_cart -> showBottomNav()
+                R.id.nav_orders -> showBottomNav()
+                R.id.nav_profile -> showBottomNav()
+                else -> hideBottomNav()
             }
         }
-        super.onBackPressed()
     }
+
+    private fun showBottomNav() {
+        binding.bottomNavView.visibility=View.VISIBLE
+        binding.bottomNavView.clearAnimation();
+        binding.bottomNavView.animate().translationY(0F).duration = 300;
+
+    }
+
+    private fun hideBottomNav() {
+        binding.bottomNavView.visibility=View.GONE
+//        binding.bottomNavView.clearAnimation();
+//        binding.bottomNavView.animate().translationY(binding.bottomNavView.height.toFloat()).duration =
+//            300;
+
+    }
+
 }

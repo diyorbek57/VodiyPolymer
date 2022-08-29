@@ -33,7 +33,7 @@
         tools:layout="@layout/fragment_orders" />
     <fragment
         android:id="@+id/checkoutActivity"
-        android:name="com.ayizor.vodiypolymer.activity.CheckoutActivity"
+        android:name="com.ayizor.vodiypolymer.fragment.CheckoutFragment"
         android:label="activity_checkout"
         tools:layout="@layout/activity_checkout" >
         <argument
