@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ayizor.vodiypolymer.R
@@ -90,7 +91,8 @@ class CheckoutFragment : Fragment() {
         dialogBinding.tvTitle.text = getString(R.string.order_successful)
         dialogBinding.tvMessage.text = getString(R.string.you_have_successfully_made_order)
         dialogBinding.btnViewOrder.setOnClickListener {
-
+            findNavController().navigate(CheckoutFragmentDirections.actionCheckoutActivityToNavOrders())
+            dialog.dismiss()
         }
 
         dialog.show()

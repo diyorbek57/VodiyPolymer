@@ -14,31 +14,39 @@
         android:id="@+id/nav_cart"
         android:name="com.ayizor.vodiypolymer.fragment.CartFragment"
         android:label="fragment_cart"
-        tools:layout="@layout/fragment_cart" >
+        tools:layout="@layout/fragment_cart">
         <action
+            app:popUpToInclusive="true"
+            app:popUpTo="@+id/checkoutActivity"
             android:id="@+id/action_nav_cart_to_checkoutActivity"
             app:destination="@id/checkoutActivity" />
     </fragment>
     <fragment
-        android:id="@+id/nav_orders"
+        android:id="@+id/nav_profile"
         android:name="com.ayizor.vodiypolymer.fragment.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" >
+        tools:layout="@layout/fragment_profile">
 
     </fragment>
     <fragment
-        android:id="@+id/nav_profile"
+        android:id="@+id/nav_orders"
         android:name="com.ayizor.vodiypolymer.fragment.OrdersFragment"
-        android:label="fragment_orders"
+        android:label=""
         tools:layout="@layout/fragment_orders" />
     <fragment
         android:id="@+id/checkoutActivity"
         android:name="com.ayizor.vodiypolymer.fragment.CheckoutFragment"
         android:label="activity_checkout"
-        tools:layout="@layout/activity_checkout" >
+        tools:layout="@layout/activity_checkout">
         <argument
             android:name="orderList"
             app:argType="com.ayizor.vodiypolymer.model.listmodel.OrdersList" />
+        <action
+            android:id="@+id/action_checkoutActivity_to_nav_orders"
+            app:destination="@id/nav_orders"
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/nav_cart"
+            app:popUpToInclusive="true" />
     </fragment>
 
 </navigation>

@@ -84,6 +84,8 @@ dependencies {
     implementation 'com.tbuonomo:dotsindicator:4.3'
     //count stemmer
     implementation "com.github.kojofosu:Quantitizer:1.6.7"
+    //rating bar
+    implementation 'com.github.ome450901:SimpleRatingBar:1.5.1'
     //toast
     implementation 'com.github.Spikeysanju:MotionToast:1.4'
     //button with progressbar

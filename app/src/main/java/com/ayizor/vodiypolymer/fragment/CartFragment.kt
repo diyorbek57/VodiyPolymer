@@ -72,7 +72,6 @@ class CartFragment : Fragment() {
     private fun getProducts() {
         binding.progressBar.visibility = View.VISIBLE
         binding.rvCart.visibility = View.GONE
-        productsList.clear()
 
         val reference = FirebaseDatabase.getInstance().getReference("carts")
         val query: Query =

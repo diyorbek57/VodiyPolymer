@@ -67,7 +67,7 @@ class DetailsActivity : BaseActivity() {
         val totalPrice= product.product_price?.toInt()
             ?.let { binding.quantityStepper.value.times(it) }
         val product = Order(
-            Utils.getUUID(),
+            product.product_id,
             UserPrefManager(context).loadUser().user_id,
             product.product_name,
             product.product_description,

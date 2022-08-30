@@ -62,5 +62,15 @@
     <string name="order">Order</string>
     <string name="order_successful">Order Successful!</string>
     <string name="you_have_successfully_made_order">You have successfully made order</string>
+    <string name="ongoing">Ongoing</string>
+    <string name="completed">Completed</string>
+    <string name="how_is_your_order">How is your order?</string>
+    <string name="please_give_your_rating_and_also_your_review">Please give your rating and also your review</string>
+    <string name="comment">Comment</string>
+    <string name="submit">Submit</string>
+    <string name="address">Address</string>
+    <string name="language">Language</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="help_center">Help Center</string>
 
 </resources>

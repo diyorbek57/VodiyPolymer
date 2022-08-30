@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.ayizor.vodiypolymer.R
 import androidx.recyclerview.widget.RecyclerView
+import com.ayizor.vodiypolymer.R
 import com.ayizor.vodiypolymer.databinding.ItemProductBinding
 import com.ayizor.vodiypolymer.manager.MainPrefManager
 import com.ayizor.vodiypolymer.model.Product
@@ -31,7 +31,6 @@ class ProductsAdapter(
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-val currency= MainPrefManager(context).loadCurrency()
         with(holder) {
             with(postsList[position]) {
 
@@ -42,13 +41,12 @@ val currency= MainPrefManager(context).loadCurrency()
                 //image
 
 
-
                 Glide.with(context).load(product_image?.get(0)?.image_url).into(binding.ivImage)
 
                 //rating
                 binding.tvRating.text = product_rating.toString()
                 //solds
-                binding.tvSold.text = product_sold +" "+ context.getString(R.string.sold)
+                binding.tvSold.text = product_sold + " " + context.getString(R.string.sold)
                 //title
                 binding.tvTitle.text = product_name
                 //post click listener
