@@ -1,6 +1,7 @@
 package com.ayizor.vodiypolymer.fragment.orders
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,20 +26,21 @@ class CompletedOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickList
     val TAG: String = OngoingOrdersFragment::class.java.simpleName
     lateinit var product: Order
     val productsList: ArrayList<Order> = ArrayList()
-
+    lateinit var mContext: Context
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentCompletedBinding.inflate(inflater, container, false)
         inits()
+        mContext= requireContext()
         return binding.root
     }
 
 
     private fun inits() {
         binding.rvCompletedOrders.layoutManager = LinearLayoutManager(
-            requireContext(),
+            mContext,
             LinearLayoutManager.VERTICAL,
             false
         )
@@ -49,7 +51,7 @@ class CompletedOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickList
         val reference = FirebaseDatabase.getInstance().getReference("carts")
         val query: Query =
             reference.orderByChild("product_user_id")
-                .equalTo(UserPrefManager(requireContext()).loadUser().user_id)
+                .equalTo(UserPrefManager(mContext).loadUser().user_id)
         query.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
@@ -73,7 +75,7 @@ class CompletedOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickList
     }
 
     private fun refreshOrdersAdapter(products: ArrayList<Order>) {
-        val adapter = OrderAdapter(requireContext(), products, this)
+        val adapter = OrderAdapter(mContext, products, this)
         binding.rvCompletedOrders.adapter = adapter
         binding.progressBar.visibility = View.GONE
         binding.rvCompletedOrders.visibility = View.VISIBLE
@@ -86,7 +88,7 @@ class CompletedOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickList
 
     @SuppressLint("SetTextI18n")
     private fun showReviewBottomSheet(order: Order) {
-        val sheetDialog = BottomSheetDialog(requireContext(), R.style.AppBottomSheetDialogTheme)
+        val sheetDialog = BottomSheetDialog(mContext, R.style.AppBottomSheetDialogTheme)
         val bottomSheetBinding: ItemLeaveReviewBorromsheetBinding =
             ItemLeaveReviewBorromsheetBinding.inflate(layoutInflater)
         sheetDialog.setContentView(bottomSheetBinding.root)
@@ -94,7 +96,7 @@ class CompletedOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickList
         bottomSheetBinding.tvPrice.text = order.product_total_price + " So'm"
         bottomSheetBinding.tvQuantity.text =
             getString(R.string.quantity) + " = " + order.product_total_quantity
-        Glide.with(requireContext()).load(order.product_image?.get(0)?.image_url)
+        Glide.with(mContext).load(order.product_image?.get(0)?.image_url)
             .into(bottomSheetBinding.ivImage)
         bottomSheetBinding.tvTitle.text = order.product_name
 

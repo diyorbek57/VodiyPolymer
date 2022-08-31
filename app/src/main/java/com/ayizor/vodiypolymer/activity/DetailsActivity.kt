@@ -64,7 +64,7 @@ class DetailsActivity : BaseActivity() {
     }
 
     private fun addToCart() {
-        val totalPrice= product.product_price?.toInt()
+        val totalPrice = product.product_price?.toInt()
             ?.let { binding.quantityStepper.value.times(it) }
         val product = Order(
             product.product_id,
@@ -80,13 +80,28 @@ class DetailsActivity : BaseActivity() {
             Utils.getCurrentTime()
         )
 
-       database.child("carts").push().setValue(product)
-           .addOnSuccessListener {
-               Utils.showSuccessToast(this, "Product Added","Product successfully added to cart")
-           }
-           .addOnFailureListener {
-               Utils.showErrorToast(this, "Product Not Added","Error adding product to cart")
-           }
+        database.child("carts").push().setValue(product)
+            .addOnSuccessListener {
+
+                try {
+                    Utils.showSuccessToast(
+                        this,
+                        "Product Added",
+                        "Product successfully added to cart"
+                    )
+                } catch (e: Exception) {
+                    e.printStackTrace()
+
+                }
+            }
+            .addOnFailureListener {
+                try {
+                    Utils.showErrorToast(this, "Product Not Added", "Error adding product to cart")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+
+                }
+            }
 
     }
 

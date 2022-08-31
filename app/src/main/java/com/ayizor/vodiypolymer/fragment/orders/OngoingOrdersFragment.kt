@@ -1,6 +1,7 @@
 package com.ayizor.vodiypolymer.fragment.orders
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,18 +22,20 @@ class OngoingOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickListen
     val TAG: String = OngoingOrdersFragment::class.java.simpleName
     lateinit var product: Order
     val productsList: ArrayList<Order> = ArrayList()
+    lateinit var mContext: Context
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentOngoingBinding.inflate(inflater, container, false)
+        mContext= requireContext()
         inits()
         return binding.root
     }
 
     private fun inits() {
         binding.rvOngoing.layoutManager = LinearLayoutManager(
-            requireContext(),
+            mContext,
             LinearLayoutManager.VERTICAL,
             false
         )
@@ -44,7 +47,7 @@ class OngoingOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickListen
         val reference = FirebaseDatabase.getInstance().getReference("orders")
         val query: Query =
             reference.orderByChild("product_user_id")
-                .equalTo(UserPrefManager(requireContext()).loadUser().user_id)
+                .equalTo(UserPrefManager(mContext).loadUser().user_id)
         query.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
@@ -68,7 +71,7 @@ class OngoingOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickListen
     }
 
     private fun refreshOrdersAdapter(products: ArrayList<Order>) {
-        val adapter = OrderAdapter(requireContext(), products, this)
+        val adapter = OrderAdapter(mContext, products, this)
         binding.rvOngoing.adapter = adapter
         binding.progressBar.visibility = View.GONE
         binding.rvOngoing.visibility = View.VISIBLE
