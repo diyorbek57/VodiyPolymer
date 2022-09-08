@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.ayizor.vodiypolymer.fragment.HomeFragment"
+        android:name="uz.ayizor.vp.fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/nav_cart"
-        android:name="com.ayizor.vodiypolymer.fragment.CartFragment"
+        android:name="uz.ayizor.vp.fragment.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart">
         <action
@@ -20,27 +20,32 @@
             app:popUpTo="@+id/checkoutActivity"
             android:id="@+id/action_nav_cart_to_checkoutActivity"
             app:destination="@id/checkoutActivity" />
+        <action
+            android:id="@+id/action_nav_cart_to_shippingAddressFragment"
+            app:destination="@id/shippingAddressFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_profile"
-        android:name="com.ayizor.vodiypolymer.fragment.ProfileFragment"
+        android:name="uz.ayizor.vp.fragment.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile">
-
-    </fragment>
+        tools:layout="@layout/fragment_profile"/>
     <fragment
         android:id="@+id/nav_orders"
-        android:name="com.ayizor.vodiypolymer.fragment.OrdersFragment"
+        android:name="uz.ayizor.vp.fragment.OrdersFragment"
         android:label=""
-        tools:layout="@layout/fragment_orders" />
+        tools:layout="@layout/fragment_orders" >
+        <action
+            android:id="@+id/action_nav_orders_to_trackOrderFragment"
+            app:destination="@id/trackOrderFragment" />
+    </fragment>
     <fragment
         android:id="@+id/checkoutActivity"
-        android:name="com.ayizor.vodiypolymer.fragment.CheckoutFragment"
+        android:name="uz.ayizor.vp.fragment.CheckoutFragment"
         android:label="activity_checkout"
         tools:layout="@layout/activity_checkout">
         <argument
             android:name="orderList"
-            app:argType="com.ayizor.vodiypolymer.model.listmodel.OrdersList" />
+            app:argType="uz.ayizor.vp.model.listmodel.OrdersList" />
         <action
             android:id="@+id/action_checkoutActivity_to_nav_orders"
             app:destination="@id/nav_orders"
@@ -48,5 +53,28 @@
             app:popUpTo="@+id/nav_cart"
             app:popUpToInclusive="true" />
     </fragment>
+    <fragment
+        android:id="@+id/trackOrderFragment"
+        android:name="uz.ayizor.vp.fragment.orders.TrackOrderFragment"
+        android:label="fragment_track_order"
+        tools:layout="@layout/fragment_track_order" >
+        <argument
+            android:name="order"
+            app:argType="uz.ayizor.vp.model.Order" />
+    </fragment>
+    <fragment
+        android:id="@+id/ongoingOrdersFragment"
+        android:name="uz.ayizor.vp.fragment.orders.OngoingOrdersFragment"
+        android:label="fragment_ongoing"
+        tools:layout="@layout/fragment_ongoing" >
+        <action
+            android:id="@+id/action_ongoingOrdersFragment_to_trackOrderFragment"
+            app:destination="@id/trackOrderFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/shippingAddressFragment"
+        android:name="uz.ayizor.vp.fragment.orders.OrderShippingAddressFragment"
+        android:label="fragment_shipping_address"
+        tools:layout="@layout/fragment_order_shipping_address" />
 
 </navigation>

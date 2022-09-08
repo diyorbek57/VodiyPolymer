@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:id="@+id/cv_main"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    app:cardCornerRadius="15dp">
+
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_users_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:tint="@color/white"
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            android:background="@color/very_dark_gray_mostly_black"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_location_bold"
+            app:shapeAppearanceOverlay="@style/circler_imageView" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/iv_users_image"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:paddingHorizontal="10dp">
+
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/generalsans_semibold"
+                android:text="Title"
+                android:textColor="@color/very_dark_gray_mostly_black"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/tv_full_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/generalsans_medium"
+                android:maxLines="1"
+                android:text="Description"
+                android:textColor="@color/dark_gray"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:src="@drawable/ic_edit_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

@@ -65,8 +65,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/appbar" />
-
+    <include
+        android:id="@+id/empty_state"
+        layout="@layout/item_empty_state"
+        android:visibility="gone" />
     <RelativeLayout
+        android:visibility="gone"
         android:id="@+id/rl_add_to_cart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

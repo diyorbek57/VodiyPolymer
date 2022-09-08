@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.ayizor.vodiypolymer">
+    package="uz.ayizor.vp">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -36,10 +36,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCZ-cIKS9g0ogNXuri4MyOC1zsh4xy1VxU" />
-
-        <activity
-            android:name=".activity.ShippingAddressActivity"
-            android:exported="false" />
 
 
         <activity

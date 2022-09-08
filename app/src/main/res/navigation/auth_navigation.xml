@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/signInFragment"
-        android:name="com.ayizor.vodiypolymer.authentication.SignInFragment"
+        android:name="uz.ayizor.vp.authentication.SignInFragment"
         android:label="fragment_sign_in"
         tools:layout="@layout/fragment_sign_in">
 
@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/codeConfirmFragment"
-        android:name="com.ayizor.vodiypolymer.authentication.CodeConfirmFragment"
+        android:name="uz.ayizor.vp.authentication.CodeConfirmFragment"
         android:label="fragment_code_confirm"
         tools:layout="@layout/fragment_code_confirm">
         <argument
@@ -56,7 +56,7 @@
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.ayizor.vodiypolymer.authentication.SignUpFragment"
+        android:name="uz.ayizor.vp.authentication.SignUpFragment"
         android:label="SignUpFragment"
         tools:layout="@layout/fragment_sign_up">
         <action

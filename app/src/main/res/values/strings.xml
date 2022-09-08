@@ -72,5 +72,16 @@
     <string name="language">Language</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="help_center">Help Center</string>
+    <string name="no_data">No data</string>
+    <string name="no_data_was_found">No data was found</string>
+    <string name="track_order">Track Order</string>
+    <string name="order_is_in_packing">Order is in Packing</string>
+    <string name="leave_review">Leave Review</string>
+    <string name="order_confirmed">Order confirmed</string>
+    <string name="order_shipped">Order shipped</string>
+    <string name="order_delivered">Order delivered</string>
+    <string name="logout">Logout</string>
+    <string name="are_you_sure_you_want_to_log_out">Are you sure you want to log out?</string>
+    <string name="yes_logout">Yes, Logout</string>
 
 </resources>

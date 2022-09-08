@@ -87,7 +87,7 @@
                     android:gravity="center"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="5dp"
-                    android:text="Track order"
+                    android:text="@string/track_order"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="14sp" />
