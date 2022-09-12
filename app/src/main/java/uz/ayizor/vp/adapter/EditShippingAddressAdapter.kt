@@ -3,14 +3,9 @@ package uz.ayizor.vp.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import uz.ayizor.vp.R
 import uz.ayizor.vp.databinding.ItemEditShippingAddressBinding
-import uz.ayizor.vp.databinding.ItemProductBinding
 import uz.ayizor.vp.model.Location
 import uz.ayizor.vp.utils.Utils
 

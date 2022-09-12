@@ -134,6 +134,7 @@ class OrderShippingAddressFragment : Fragment(),
                         "Address",
                         addressData?.latitude.toString(),
                         addressData?.longitude.toString(),
+                        bottomSheetBinding.isDefault.isChecked,
                         Utils.getCurrentTime(),
                         Utils.getCurrentTime()
                     )
@@ -146,6 +147,7 @@ class OrderShippingAddressFragment : Fragment(),
                         bottomSheetBinding.etSearch.text.toString(),
                         addressData?.latitude.toString(),
                         addressData?.longitude.toString(),
+                        bottomSheetBinding.isDefault.isChecked,
                         Utils.getCurrentTime(),
                         Utils.getCurrentTime()
                     )
@@ -186,8 +188,9 @@ class OrderShippingAddressFragment : Fragment(),
 
 
                                         address.location_name?.let { Log.e(TAG, it) }
-                                        addressList.add(address)
+
                                     }
+                                    addressList.add(address)
                                     refreshAddressAdapter(addressList)
                                 }
 

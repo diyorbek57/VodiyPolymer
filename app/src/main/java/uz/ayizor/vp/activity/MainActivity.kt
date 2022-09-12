@@ -1,6 +1,7 @@
 package uz.ayizor.vp.activity
 
 import android.annotation.SuppressLint
+import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -51,6 +52,8 @@ class MainActivity : BaseActivity() {
         firebaseAppCheck.installAppCheckProviderFactory(
             SafetyNetAppCheckProviderFactory.getInstance()
         )
+
+        Logger.e(TAG,UserPrefManager(this).loadUser().toString())
 
 
     }

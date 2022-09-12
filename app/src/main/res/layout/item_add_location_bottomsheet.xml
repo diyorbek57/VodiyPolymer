@@ -48,7 +48,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
         android:background="@drawable/item_search_view_background"
         android:paddingHorizontal="25dp"
         android:paddingVertical="10dp">
@@ -83,7 +82,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
         android:background="@drawable/item_search_view_background"
         android:paddingHorizontal="25dp"
         android:paddingVertical="10dp">
@@ -109,7 +107,29 @@
             app:tint="@color/very_dark_gray_mostly_black" />
 
     </RelativeLayout>
+<LinearLayout
+    android:layout_marginTop="10dp"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
+
+    <CheckBox
+        android:id="@+id/isDefault"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:text="Make this as the default address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="25dp"
+        android:background="@android:color/transparent"
+        android:maxLines="1"
+        android:fontFamily="@font/generalsans_semibold"
+        android:textColor="@color/very_dark_gray_mostly_black"
+        android:padding="3dp"
+        android:textSize="15sp" />
+</LinearLayout>
     <Button
         android:id="@+id/btn_add"
         android:layout_width="match_parent"

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -37,6 +38,14 @@ class ProfileFragment : Fragment() {
 
         binding.rlLogout.setOnClickListener {
             showLogoutBottomSheet()
+        }
+        binding.rlEditProfile.setOnClickListener {
+            val action = ProfileFragmentDirections.actionNavProfileToEditProfileFragment()
+            findNavController().navigate(action)
+        }
+        binding.rlAddress.setOnClickListener {
+            val action = ProfileFragmentDirections.actionNavProfileToShippingAddressFragment()
+            findNavController().navigate(action)
         }
 
     }

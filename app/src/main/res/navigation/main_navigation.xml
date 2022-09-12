@@ -22,13 +22,20 @@
             app:destination="@id/checkoutActivity" />
         <action
             android:id="@+id/action_nav_cart_to_shippingAddressFragment"
-            app:destination="@id/shippingAddressFragment" />
+            app:destination="@id/orderShippingAddressFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_profile"
         android:name="uz.ayizor.vp.fragment.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile"/>
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_nav_profile_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_nav_profile_to_shippingAddressFragment"
+            app:destination="@id/shippingAddressFragment" />
+    </fragment>
     <fragment
         android:id="@+id/nav_orders"
         android:name="uz.ayizor.vp.fragment.OrdersFragment"
@@ -72,9 +79,19 @@
             app:destination="@id/trackOrderFragment" />
     </fragment>
     <fragment
-        android:id="@+id/shippingAddressFragment"
+        android:id="@+id/orderShippingAddressFragment"
         android:name="uz.ayizor.vp.fragment.orders.OrderShippingAddressFragment"
         android:label="fragment_shipping_address"
         tools:layout="@layout/fragment_order_shipping_address" />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="uz.ayizor.vp.fragment.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" />
+    <fragment
+        android:id="@+id/shippingAddressFragment"
+        android:name="uz.ayizor.vp.fragment.ShippingAddressFragment"
+        android:label="fragment_shipping_address"
+        tools:layout="@layout/fragment_shipping_address" />
 
 </navigation>

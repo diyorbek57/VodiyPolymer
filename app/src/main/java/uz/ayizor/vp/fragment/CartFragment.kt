@@ -2,7 +2,6 @@ package uz.ayizor.vp.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +18,8 @@ import uz.ayizor.vp.model.Order
 import uz.ayizor.vp.model.listmodel.OrdersList
 import com.google.firebase.database.*
 import com.google.firebase.database.annotations.NotNull
+import uz.ayizor.vp.model.Location
+import uz.ayizor.vp.model.User
 
 class CartFragment : Fragment() {
 
@@ -27,6 +28,8 @@ class CartFragment : Fragment() {
     lateinit var product: Order
     val productsList: ArrayList<Order> = ArrayList()
     var totalPrice = 0
+    lateinit var address: Location
+    val addressList: ArrayList<Location> = ArrayList()
     lateinit var mContext: Context
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,7 +50,8 @@ class CartFragment : Fragment() {
         )
 
         binding.btnCheckout.setOnClickListener {
-            if (!UserPrefManager(mContext).loadUser()?.user_location?.get(0)?.location_id.isNullOrEmpty()) {
+            getLocations(UserPrefManager(mContext).loadUser()?.user_id)
+            if (UserPrefManager(mContext).loadUser()?.user_location?.isNotEmpty() == true) {
                 val orders = OrdersList(productsList)
                 val action = CartFragmentDirections.actionNavCartToCheckoutActivity(orders)
                 findNavController().navigate(action)
@@ -113,6 +117,56 @@ class CartFragment : Fragment() {
 
 
     }
+    fun getLocations(userId: String?) {
+        val reference = FirebaseDatabase.getInstance().reference
+        val query: Query =
+            reference.child("users").orderByChild("user_phone_number").equalTo(userId)
+        query.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+
+
+                    for (userSnapshot in snapshot.children) {
+                        userSnapshot.ref.child("user_location")
+                            .addValueEventListener(object : ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    if (snapshot.exists()) {
+
+
+                                        for (locationSnapshot in snapshot.children) {
+                                            Logger.e(TAG, "locationSnapshot: " + locationSnapshot.toString())
+                                            address = locationSnapshot.getValue(Location::class.java)!!
+                                            address.location_name?.let { Log.e(TAG, it) }
+                                            addressList.add(address)
+                                        }
+                                    }
+
+
+
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+                                    TODO("Not yet implemented")
+                                }
+
+                            })
+
+
+                    }
+
+                } else {
+                    Log.e(TAG, "NO DATA")
+                }
+            }
+
+            override fun onCancelled(@NotNull error: DatabaseError) {
+                Log.e(TAG, "NO DATA")
+            }
+        })
+
+    }
+
 
     private fun getTotalPrice(products: ArrayList<Order>) {
         Logger.e(TAG, "getTotalPrice")

@@ -102,7 +102,7 @@ class ShippingAddressFragment : Fragment(), EditShippingAddressAdapter.OnItemCli
         if (requestCode == Constants.PLACE_PICKER_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 val addressData = data?.getParcelableExtra<AddressData>(Constants.ADDRESS_INTENT)
-                showEditBottomsheet(addressData)
+                showCreateBottomsheet(addressData)
 
             }
         } else {
@@ -110,7 +110,7 @@ class ShippingAddressFragment : Fragment(), EditShippingAddressAdapter.OnItemCli
         }
     }
 
-    private fun showEditBottomsheet(addressData: AddressData?) {
+    private fun showCreateBottomsheet(addressData: AddressData?) {
         val sheetDialog = BottomSheetDialog(mContext, R.style.AppBottomSheetDialogTheme)
         val bottomSheetBinding: ItemAddLocationBottomsheetBinding =
             ItemAddLocationBottomsheetBinding.inflate(layoutInflater)
@@ -133,6 +133,7 @@ class ShippingAddressFragment : Fragment(), EditShippingAddressAdapter.OnItemCli
                         "Address",
                         addressData?.latitude.toString(),
                         addressData?.longitude.toString(),
+                        bottomSheetBinding.isDefault.isChecked,
                         Utils.getCurrentTime(),
                         Utils.getCurrentTime()
                     )
@@ -145,6 +146,7 @@ class ShippingAddressFragment : Fragment(), EditShippingAddressAdapter.OnItemCli
                         bottomSheetBinding.etSearch.text.toString(),
                         addressData?.latitude.toString(),
                         addressData?.longitude.toString(),
+                        bottomSheetBinding.isDefault.isChecked,
                         Utils.getCurrentTime(),
                         Utils.getCurrentTime()
                     )
@@ -155,6 +157,60 @@ class ShippingAddressFragment : Fragment(), EditShippingAddressAdapter.OnItemCli
 
 
         }
+
+        sheetDialog.show();
+        sheetDialog.window?.attributes?.windowAnimations = R.style.DialogAnimaton;
+    }
+
+    private fun showEditBottomsheet(location: Location) {
+        val sheetDialog = BottomSheetDialog(mContext, R.style.AppBottomSheetDialogTheme)
+        val bottomSheetBinding: ItemAddLocationBottomsheetBinding =
+            ItemAddLocationBottomsheetBinding.inflate(layoutInflater)
+        sheetDialog.setContentView(bottomSheetBinding.root)
+        val address = location.location_longitude?.toDouble().let {
+            location.location_latitude?.toDouble().let { it1 ->
+                if (it1 != null) {
+                    if (it != null) {
+                        Utils.getCoordinateName(
+                            mContext,
+                            it1, it
+                        )
+                    }
+                }
+            }
+        }
+
+//        bottomSheetBinding.tvAddress.text = ad
+//        bottomSheetBinding.btnAdd.setOnClickListener {
+//            if (bottomSheetBinding.etSearch.text.isNullOrEmpty()) {
+//                createAddress(
+//                    Location(
+//                        Utils.getUUID(),
+//                        "Address",
+//                        addressData?.latitude.toString(),
+//                        addressData?.longitude.toString(),
+//                        Utils.getCurrentTime(),
+//                        Utils.getCurrentTime()
+//                    )
+//                )
+//                sheetDialog.dismiss()
+//            } else {
+//                createAddress(
+//                    Location(
+//                        Utils.getUUID(),
+//                        bottomSheetBinding.etSearch.text.toString(),
+//                        addressData?.latitude.toString(),
+//                        addressData?.longitude.toString(),
+//                        Utils.getCurrentTime(),
+//                        Utils.getCurrentTime()
+//                    )
+//                )
+//                sheetDialog.dismiss()
+//                getAddresses()
+//            }
+//
+//
+//        }
 
         sheetDialog.show();
         sheetDialog.window?.attributes?.windowAnimations = R.style.DialogAnimaton;
