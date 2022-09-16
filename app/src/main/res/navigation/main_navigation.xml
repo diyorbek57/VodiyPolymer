@@ -30,11 +30,17 @@
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile">
         <action
+            app:enterAnim="@anim/enter_from_right"
             android:id="@+id/action_nav_profile_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
         <action
+            app:enterAnim="@anim/enter_from_right"
             android:id="@+id/action_nav_profile_to_shippingAddressFragment"
             app:destination="@id/shippingAddressFragment" />
+        <action
+            app:enterAnim="@anim/enter_from_right"
+            android:id="@+id/action_nav_profile_to_languageFragment"
+            app:destination="@id/languageFragment" />
     </fragment>
     <fragment
         android:id="@+id/nav_orders"
@@ -59,6 +65,9 @@
             app:launchSingleTop="true"
             app:popUpTo="@+id/nav_cart"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_checkoutActivity_to_orderShippingAddressFragment"
+            app:destination="@id/orderShippingAddressFragment" />
     </fragment>
     <fragment
         android:id="@+id/trackOrderFragment"
@@ -93,5 +102,10 @@
         android:name="uz.ayizor.vp.fragment.ShippingAddressFragment"
         android:label="fragment_shipping_address"
         tools:layout="@layout/fragment_shipping_address" />
+    <fragment
+        android:id="@+id/languageFragment"
+        android:name="uz.ayizor.vp.fragment.LanguageFragment"
+        android:label="fragment_language"
+        tools:layout="@layout/fragment_language" />
 
 </navigation>

@@ -33,4 +33,13 @@ class MainPrefManager(context: Context) {
     fun loadCurrency(): String? {
         return sharedPreferences!!.getString("currency", "")
     }
+    fun storeLanguage(currency: String?) {
+        val prefsEditor = sharedPreferences!!.edit()
+        prefsEditor.putString("language", currency)
+        prefsEditor.apply()
+    }
+
+    fun loadLanguage(): String? {
+        return sharedPreferences!!.getString("language", "")
+    }
 }

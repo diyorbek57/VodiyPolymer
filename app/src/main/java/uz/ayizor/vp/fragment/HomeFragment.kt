@@ -1,5 +1,7 @@
 package uz.ayizor.vp.fragment
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
@@ -8,21 +10,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import uz.ayizor.vp.utils.Logger
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.database.*
+
+import com.google.firebase.database.annotations.NotNull
+import com.youth.banner.adapter.BannerImageAdapter
+import com.youth.banner.holder.BannerImageHolder
+import com.youth.banner.indicator.CircleIndicator
+import uz.ayizor.vp.R
 import uz.ayizor.vp.activity.NotificationActivity
 import uz.ayizor.vp.adapter.CategoryAdapter
 import uz.ayizor.vp.adapter.ProductsAdapter
 import uz.ayizor.vp.databinding.FragmentHomeBinding
 import uz.ayizor.vp.model.Category
 import uz.ayizor.vp.model.Product
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
-import com.google.firebase.database.*
-import com.google.firebase.database.annotations.NotNull
-import com.youth.banner.adapter.BannerImageAdapter
-import com.youth.banner.holder.BannerImageHolder
-import com.youth.banner.indicator.CircleIndicator
+import uz.ayizor.vp.utils.Logger
+import uz.ayizor.vp.utils.Utils
 
 
 class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
@@ -32,12 +37,15 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
     val TAG: String = HomeFragment::class.java.simpleName
     lateinit var product: Product
     lateinit var category: Category
+    var database = FirebaseDatabase.getInstance()
+    private var shortAnimationDuration: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
+        shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
         inits()
         return binding.root
     }
@@ -60,8 +68,22 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
             val intent = Intent(requireContext(), NotificationActivity::class.java)
             startActivity(intent)
         }
+
+        binding.ivFavorites.setOnClickListener {
+            for (i in 0 until 5) {
+                database.getReference("categories").push().setValue(
+                    Category(
+                        Utils.getUUID(),
+                        "test $i",
+                        Utils.getCurrentTime(),
+                        Utils.getCurrentTime()
+                    )
+                )
+            }
+
+        }
         getDiscountProducts()
-        getProducts(null)
+        getProducts()
         getCategory()
     }
 
@@ -89,11 +111,14 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun refreshProductsAdapter(products: ArrayList<Product>) {
         val adapter = ProductsAdapter(requireContext(), products, this)
         binding.rvProducts.adapter = adapter
-//        binding.progressBar.visibility = View.GONE
-//        binding.llMain.visibility = View.VISIBLE
+        adapter.notifyDataSetChanged()
+        binding.progressBar.visibility = View.GONE
+        binding.flSearch.visibility = View.VISIBLE
+        binding.vpBanner.visibility = View.VISIBLE
 
     }
 
@@ -105,18 +130,14 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
 
     }
 
-    private fun getProducts(category_id: String?) {
-        if (!category_id.isNullOrEmpty()) {
-            getProductByCategory(category_id)
-        } else {
-            getAllProducts()
-        }
+    private fun getProducts() {
+        getAllProducts()
     }
 
     private fun getAllProducts() {
+        binding.progressBar.visibility = View.VISIBLE
         val productsList: ArrayList<Product> = ArrayList()
-        val reference = FirebaseDatabase.getInstance().getReference("products")
-
+        val reference = database.getReference("products")
         reference.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
@@ -130,21 +151,30 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
                     }
 
                     refreshProductsAdapter(productsList)
+                    showViewWithAnimations(binding.rvProducts)
+
+
+                } else {
+                    Logger.e(TAG, "getAllProducts: snapshot = null ")
+                    hideViewWithAnimations(binding.rvProducts)
                 }
             }
 
-            override fun onCancelled(@NotNull error: DatabaseError) {}
+            override fun onCancelled(@NotNull error: DatabaseError) {
+                Logger.e(TAG, error.message)
+            }
         })
     }
 
     private fun getProductByCategory(categoryId: String?) {
+        binding.progressBar.visibility = View.VISIBLE
         val productsList: ArrayList<Product> = ArrayList()
-        val reference = FirebaseDatabase.getInstance().getReference("products")
+        val reference = database.getReference("products")
         val query: Query =
             reference.orderByChild("product_category_id")
                 .equalTo(categoryId)
         query.addValueEventListener(object : ValueEventListener {
-            @SuppressLint("SetTextI18n")
+            @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     productsList.clear()
@@ -154,24 +184,34 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
                             productsList.add(product)
                         }
                     }
+                    Logger.e(TAG, productsList.size.toString())
 
                     refreshProductsAdapter(productsList)
+                    showViewWithAnimations(binding.rvProducts)
+
+
+                } else {
+                    Logger.e(TAG, "getProductByCategory: snapshot = null ")
+                    hideViewWithAnimations(binding.rvProducts)
                 }
             }
 
-            override fun onCancelled(@NotNull error: DatabaseError) {}
+            override fun onCancelled(@NotNull error: DatabaseError) {
+                Logger.e(TAG, error.message)
+            }
         })
     }
 
     private fun getCategory() {
         val categoriesList: ArrayList<Category> = ArrayList()
-        val reference = FirebaseDatabase.getInstance().getReference("categories")
+        val reference = database.getReference("categories")
 
         reference.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     categoriesList.clear()
+                    categoriesList.add(Category("all", getString(R.string.all), null, null))
                     for (userSnapshot in snapshot.children) {
                         category = userSnapshot.getValue(Category::class.java)!!
                         if (category != null) {
@@ -191,7 +231,7 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
 
     private fun getDiscountProducts() {
         val productsList: ArrayList<Product> = ArrayList()
-        val reference = FirebaseDatabase.getInstance().getReference("products")
+        val reference = database.getReference("products")
         val query: Query =
             reference.orderByChild("product_discount").startAfter("0")
         query.addValueEventListener(object : ValueEventListener {
@@ -206,10 +246,15 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
                         }
                     }
                     setupBanner(productsList)
+                } else {
+                    Logger.e(TAG, "getProductByCategory: snapshot = null ")
+
                 }
             }
 
-            override fun onCancelled(@NotNull error: DatabaseError) {}
+            override fun onCancelled(@NotNull error: DatabaseError) {
+                Logger.e(TAG, error.message)
+            }
         })
 
 
@@ -222,7 +267,65 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
     }
 
     override fun onCategoryItemClickListener(id: String) {
-        Logger.d(TAG, id)
+        if (id.contentEquals("all")) {
+            getAllProducts()
+
+        } else {
+            getProductByCategory(id)
+        }
+
+    }
+    private fun showViewWithAnimations(view: View) {
+        view.apply {
+            // Set the content view to 0% opacity but visible, so that it is visible
+            // (but fully transparent) during the animation.
+            alpha = 0f
+            visibility = View.VISIBLE
+
+            // Animate the content view to 100% opacity, and clear any animation
+            // listener set on the view.
+            animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration.toLong())
+                .setListener(null)
+        }
+        // Animate the loading view to 0% opacity. After the animation ends,
+        // set its visibility to GONE as an optimization step (it won't
+        // participate in layout passes, etc.)
+        binding.progressBar.animate()
+            .alpha(0f)
+            .setDuration(shortAnimationDuration.toLong())
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    binding.progressBar.visibility = View.GONE
+                }
+            })
+    }
+    private fun hideViewWithAnimations(view: View) {
+        view.apply {
+            // Set the content view to 0% opacity but visible, so that it is visible
+            // (but fully transparent) during the animation.
+            alpha = 0f
+            visibility = View.GONE
+
+            // Animate the content view to 100% opacity, and clear any animation
+            // listener set on the view.
+            animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration.toLong())
+                .setListener(null)
+        }
+        // Animate the loading view to 0% opacity. After the animation ends,
+        // set its visibility to GONE as an optimization step (it won't
+        // participate in layout passes, etc.)
+        binding.progressBar.animate()
+            .alpha(0f)
+            .setDuration(shortAnimationDuration.toLong())
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    binding.progressBar.visibility = View.GONE
+                }
+            })
     }
 
 

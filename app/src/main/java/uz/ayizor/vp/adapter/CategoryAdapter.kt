@@ -7,7 +7,8 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import uz.ayizor.vp.R
@@ -39,12 +40,11 @@ class CategoryAdapter(
 
         val category: Category = postsList[position]
         if (holder is ProductColorViewHolder) {
-
+            holder.name.text = category.category_name
             holder.mainFl.setOnClickListener {
                 row_index = position;
                 notifyDataSetChanged();
                 if (category.category_id != null) {
-                    Toast.makeText(context, category.category_id, Toast.LENGTH_SHORT).show()
                     onCategoryItemClickListener.onCategoryItemClickListener(
                         category.category_id
                     )
@@ -52,7 +52,7 @@ class CategoryAdapter(
             }
             val sdk: Int = android.os.Build.VERSION.SDK_INT;
             if (row_index == position) {
-holder.name.setTextColor(Color.parseColor("#ffffff"))
+                holder.name.setTextColor(Color.parseColor("#ffffff"))
                 if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
                     holder.mainFl.setBackgroundDrawable(
                         ContextCompat.getDrawable(

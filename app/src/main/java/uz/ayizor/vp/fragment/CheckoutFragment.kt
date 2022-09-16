@@ -71,6 +71,11 @@ class CheckoutFragment : Fragment() {
             }
             showDialog()
         }
+
+        binding.rlChangeLocations.setOnClickListener {
+            val action = CheckoutFragmentDirections.actionCheckoutActivityToOrderShippingAddressFragment()
+            findNavController().navigate(action)
+        }
         user = UserPrefManager(
             requireContext()
         ).loadUser()

@@ -47,6 +47,10 @@ class ProfileFragment : Fragment() {
             val action = ProfileFragmentDirections.actionNavProfileToShippingAddressFragment()
             findNavController().navigate(action)
         }
+        binding.rlLanguage.setOnClickListener {
+            val action = ProfileFragmentDirections.actionNavProfileToLanguageFragment()
+            findNavController().navigate(action)
+        }
 
     }
 
