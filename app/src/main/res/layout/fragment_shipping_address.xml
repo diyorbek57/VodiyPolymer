@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.ShippingAddressFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -83,13 +83,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
-            app:backgroundTint="@color/very_light_gray"
             android:background="@drawable/item_circular_button_background"
             android:fontFamily="@font/generalsans_semibold"
             android:text="@string/add_new_address"
             android:textAllCaps="false"
             android:textColor="@color/very_dark_gray_mostly_black"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            app:backgroundTint="@color/very_light_gray" />
 
     </LinearLayout>
 

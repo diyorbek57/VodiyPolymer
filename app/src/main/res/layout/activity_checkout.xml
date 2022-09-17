@@ -105,6 +105,7 @@
                         android:layout_height="50dp"
                         android:layout_centerVertical="true"
                         android:adjustViewBounds="true"
+                        android:tint="@color/white"
                         android:background="@color/very_dark_gray_mostly_black"
                         android:scaleType="centerInside"
                         android:src="@drawable/ic_location_bold"
