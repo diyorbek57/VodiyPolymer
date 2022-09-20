@@ -146,6 +146,7 @@ class ShippingAddressFragment : Fragment(), EditShippingAddressAdapter.OnItemCli
         )
         bottomSheetBinding.etName.setText(location.location_name.toString())
         bottomSheetBinding.tvAddress.text = address?.knownName.toString()
+        bottomSheetBinding.isDefault.isChecked = location.location_isDefault!!
         bottomSheetBinding.btnDelete.setOnClickListener {
             deleteAddress(location.location_id.toString())
             sheetDialog.dismiss()
