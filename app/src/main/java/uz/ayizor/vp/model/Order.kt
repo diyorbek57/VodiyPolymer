@@ -17,5 +17,6 @@ data class Order(
     var product_isOrdered: Boolean = false,
     var product_step: Int? = null,
     val product_created_at: String? = null,
-    val product_updated_at: String? = null
+    val product_updated_at: String? = null,
+    val courier_id: String? = null
 ) : Parcelable

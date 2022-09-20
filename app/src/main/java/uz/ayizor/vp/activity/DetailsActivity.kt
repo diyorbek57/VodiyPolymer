@@ -79,7 +79,8 @@ class DetailsActivity : BaseActivity() {
             false,
             0,
             Utils.getCurrentTime(),
-            Utils.getCurrentTime()
+            Utils.getCurrentTime(),
+            null
         )
 
         database.child("carts").push().setValue(product)

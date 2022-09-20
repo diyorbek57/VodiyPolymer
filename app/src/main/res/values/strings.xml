@@ -85,5 +85,7 @@
     <string name="yes_logout">Yes, Logout</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="all">All</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
 
 </resources>

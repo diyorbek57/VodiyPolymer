@@ -129,13 +129,13 @@ object Utils {
             val geocoder = Geocoder(context, Locale.getDefault());
             val addresses = geocoder.getFromLocation(latitude, longitude, 1);
             val address =
-                addresses[0].getAddressLine(0) // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                addresses?.get(0)?.getAddressLine(0) // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
 
-            val city = addresses[0].locality
-            val state = addresses[0].adminArea
-            val country = addresses[0].countryName
-            val postalCode = addresses[0].postalCode
-            val knownName = addresses[0].featureName // Only if available else return NULL
+            val city = addresses?.get(0)?.locality
+            val state = addresses?.get(0)?.adminArea
+            val country = addresses?.get(0)?.countryName
+            val postalCode = addresses?.get(0)?.postalCode
+            val knownName = addresses?.get(0)?.featureName // Only if available else return NULL
 
             return CustomLocation(address,city, state, country, postalCode, knownName)
         } catch (e: Exception) {

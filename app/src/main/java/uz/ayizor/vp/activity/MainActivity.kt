@@ -1,23 +1,27 @@
 package uz.ayizor.vp.activity
 
 import android.annotation.SuppressLint
-import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import uz.ayizor.vp.utils.Logger
-import uz.ayizor.vp.databinding.ActivityMainBinding
-import uz.ayizor.vp.manager.UserPrefManager
-import uz.ayizor.vp.model.Location
-import uz.ayizor.vp.model.User
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import com.google.firebase.database.*
 import com.google.firebase.database.annotations.NotNull
+import kotlinx.coroutines.flow.collectLatest
+import uz.ayizor.afeme.utils.Extensions.toast
 import uz.ayizor.vp.R
+import uz.ayizor.vp.databinding.ActivityMainBinding
+import uz.ayizor.vp.helper.ConnectivityObserver
+import uz.ayizor.vp.helper.NetworkConnectivityObserver
+import uz.ayizor.vp.manager.UserPrefManager
+import uz.ayizor.vp.model.Location
+import uz.ayizor.vp.model.User
+import uz.ayizor.vp.utils.Logger
 
 
 class MainActivity : BaseActivity() {
@@ -27,10 +31,27 @@ class MainActivity : BaseActivity() {
     lateinit var user: User
     val addressList: ArrayList<Location> = ArrayList()
     lateinit var address: Location
+    private lateinit var connectivityObserver: ConnectivityObserver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        connectivityObserver = NetworkConnectivityObserver(applicationContext)
+
+        lifecycleScope.launchWhenCreated {
+            connectivityObserver.observe().collectLatest {
+                if (it.toString().contentEquals("Available")) {
+                    toast("Available")
+                } else if (it.toString().contentEquals("Unavailable")) {
+                    toast("Unavailable")
+                } else if (it.toString().contentEquals("Losing")) {
+                    toast("Losing")
+                } else {
+                    toast("Lost ")
+                }
+            }
+        }
+
         setupNavigation()
         inits()
     }
@@ -53,7 +74,7 @@ class MainActivity : BaseActivity() {
             SafetyNetAppCheckProviderFactory.getInstance()
         )
 
-        Logger.e(TAG,UserPrefManager(this).loadUser().toString())
+        Logger.e(TAG, UserPrefManager(this).loadUser().toString())
 
 
     }
@@ -168,14 +189,14 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showBottomNav() {
-        binding.bottomNavView.visibility=View.VISIBLE
+        binding.bottomNavView.visibility = View.VISIBLE
         binding.bottomNavView.clearAnimation();
         binding.bottomNavView.animate().translationY(0F).duration = 300;
 
     }
 
     private fun hideBottomNav() {
-        binding.bottomNavView.visibility=View.GONE
+        binding.bottomNavView.visibility = View.GONE
 //        binding.bottomNavView.clearAnimation();
 //        binding.bottomNavView.animate().translationY(binding.bottomNavView.height.toFloat()).duration =
 //            300;

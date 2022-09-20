@@ -32,10 +32,13 @@ import uz.ayizor.vp.utils.Utils
 class OrderShippingAddressFragment : Fragment(),
     ChooseShippingAddressAdapter.OnRadioButtonClickListener {
     lateinit var binding: FragmentOrderShippingAddressBinding
+    lateinit var bottomSheetBinding: ItemAddLocationBottomsheetBinding
     val TAG: String = OrderShippingAddressFragment::class.java.simpleName
     val addressList: ArrayList<Location> = ArrayList()
+    var addressData: AddressData? = null
     lateinit var address: Location
     lateinit var mContext: Context
+    lateinit var reference: DatabaseReference
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,7 +52,7 @@ class OrderShippingAddressFragment : Fragment(),
 
 
     private fun inits() {
-
+        reference = FirebaseDatabase.getInstance().reference.child("users")
         binding.rvAddress.layoutManager = LinearLayoutManager(
             mContext,
             LinearLayoutManager.VERTICAL,
@@ -102,7 +105,7 @@ class OrderShippingAddressFragment : Fragment(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == Constants.PLACE_PICKER_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
-                val addressData = data?.getParcelableExtra<AddressData>(Constants.ADDRESS_INTENT)
+                addressData = data?.getParcelableExtra<AddressData>(Constants.ADDRESS_INTENT)
                 showEditBottomsheet(addressData)
 
             }
@@ -113,7 +116,7 @@ class OrderShippingAddressFragment : Fragment(),
 
     private fun showEditBottomsheet(addressData: AddressData?) {
         val sheetDialog = BottomSheetDialog(mContext, R.style.AppBottomSheetDialogTheme)
-        val bottomSheetBinding: ItemAddLocationBottomsheetBinding =
+        bottomSheetBinding =
             ItemAddLocationBottomsheetBinding.inflate(layoutInflater)
         sheetDialog.setContentView(bottomSheetBinding.root)
         val address = addressData?.longitude?.let {
@@ -127,33 +130,13 @@ class OrderShippingAddressFragment : Fragment(),
 
         bottomSheetBinding.tvAddress.text = address?.address
         bottomSheetBinding.btnAdd.setOnClickListener {
-            if (bottomSheetBinding.etSearch.text.isNullOrEmpty()) {
-                createAddress(
-                    Location(
-                        Utils.getUUID(),
-                        "Address",
-                        addressData?.latitude.toString(),
-                        addressData?.longitude.toString(),
-                        bottomSheetBinding.isDefault.isChecked,
-                        Utils.getCurrentTime(),
-                        Utils.getCurrentTime()
-                    )
-                )
+
+            if (bottomSheetBinding.isDefault.isChecked) {
+                getDeafultAddress()
                 sheetDialog.dismiss()
             } else {
-                createAddress(
-                    Location(
-                        Utils.getUUID(),
-                        bottomSheetBinding.etSearch.text.toString(),
-                        addressData?.latitude.toString(),
-                        addressData?.longitude.toString(),
-                        bottomSheetBinding.isDefault.isChecked,
-                        Utils.getCurrentTime(),
-                        Utils.getCurrentTime()
-                    )
-                )
+                createAddress(getCreatedAddress())
                 sheetDialog.dismiss()
-                getAddresses()
             }
 
 
@@ -165,33 +148,33 @@ class OrderShippingAddressFragment : Fragment(),
 
 
     private fun getAddresses() {
-        val reference = FirebaseDatabase.getInstance().reference
-        val query: Query =
-            reference.child("users").orderByChild("user_id")
-                .equalTo(UserPrefManager(mContext).loadUser()?.user_id)
+        val query: Query = reference.orderByChild("user_id")
+            .equalTo(UserPrefManager(mContext).loadUser()?.user_id)
         query.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-
                     for (userSnapshot in snapshot.children) {
                         userSnapshot.ref.child("user_location")
                             .addValueEventListener(object : ValueEventListener {
                                 override fun onDataChange(snapshot: DataSnapshot) {
-                                    for (locationSnapshot in snapshot.children) {
-                                        Logger.e(
-                                            TAG,
-                                            "locationSnapshot: " + locationSnapshot.toString()
-                                        )
-                                        address =
-                                            locationSnapshot.getValue(Location::class.java)!!
+                                    if (snapshot.exists()) {
+                                        addressList.clear()
+                                        for (locationSnapshot in snapshot.children) {
+                                            Logger.e(
+                                                TAG,
+                                                "locationSnapshot: " + locationSnapshot.toString()
+                                            )
+                                            address =
+                                                locationSnapshot.getValue(Location::class.java)!!
 
 
-                                        address.location_name?.let { Log.e(TAG, it) }
+                                            address.location_name?.let { Log.e(TAG, it) }
+                                            addressList.add(address)
+                                        }
 
+                                        refreshAddressAdapter(addressList)
                                     }
-                                    addressList.add(address)
-                                    refreshAddressAdapter(addressList)
                                 }
 
                                 override fun onCancelled(error: DatabaseError) {
@@ -216,8 +199,6 @@ class OrderShippingAddressFragment : Fragment(),
     }
 
     private fun createAddress(location: Location) {
-
-        val reference = FirebaseDatabase.getInstance().getReference("users")
         val query: Query = reference.orderByChild("user_id")
             .equalTo(UserPrefManager(mContext).loadUser()?.user_id)
         query.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -225,7 +206,93 @@ class OrderShippingAddressFragment : Fragment(),
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     for (userSnapshot in snapshot.children) {
+                        Logger.e(TAG, "1:" + location.toString())
+
                         userSnapshot.ref.child("user_location").push().setValue(location)
+                    }
+                }
+            }
+
+            override fun onCancelled(@NotNull error: DatabaseError) {}
+        })
+    }
+
+    private fun getDeafultAddress() {
+        val query: Query = reference.orderByChild("user_id")
+            .equalTo(UserPrefManager(mContext).loadUser()?.user_id)
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (userSnapshot in snapshot.children) {
+                        Logger.e(TAG, "getDeafultAddress : 1 :"+  snapshot.exists().toString())
+                        userSnapshot.ref.child("user_location").orderByChild("location_isDefault").equalTo(true)
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    if (snapshot.exists()) {
+                                    for (locationsSnapshot in snapshot.children) {
+                                        Logger.e(TAG, "getDeafultAddress : 2 :" + locationsSnapshot.exists().toString())
+
+
+                                            val id = locationsSnapshot.child("location_id").getValue(String::class.java)
+                                            changeDefaultLocation(id)
+                                            Logger.e(TAG, "getDeafultAddress : 2 :" + id.toString())
+
+
+
+                                    }
+                                    } else {
+                                        createAddress(getCreatedAddress())
+                                    }
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+                                    Logger.e(TAG, "getDeafultAddress : 2 : error message:" + error.message)
+                                    Logger.e(TAG, "getDeafultAddress : 2 : error code" + error.code)
+                                    Logger.e(TAG, "getDeafultAddress : 2 : error code" + error.toException())
+                                    Logger.e(TAG, "getDeafultAddress : 2 : error code" + error.toException())
+                                }
+
+                            })
+                    }
+                }
+            }
+
+            override fun onCancelled(@NotNull error: DatabaseError) {
+                Logger.e(TAG, "getDeafultAddress : 1 :" + error.message)
+            }
+        })
+    }
+
+    private fun changeDefaultLocation(locationId: String?) {
+        val query: Query =
+            reference.orderByChild("user_id").equalTo(UserPrefManager(mContext).loadUser()?.user_id)
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (userSnapshot in snapshot.children) {
+                        userSnapshot.ref.child("user_location").orderByChild("location_id")
+                            .equalTo(locationId)
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    for (locationsSnapshot in snapshot.children) {
+                                        if (locationsSnapshot.exists()) {
+                                            locationsSnapshot.ref.child("location_isDefault")
+                                                .setValue(false).addOnSuccessListener {
+                                                    createAddress(getCreatedAddress())
+                                                }
+                                        }
+
+
+                                    }
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+
+                                }
+
+                            })
 
                     }
                 }
@@ -233,6 +300,32 @@ class OrderShippingAddressFragment : Fragment(),
 
             override fun onCancelled(@NotNull error: DatabaseError) {}
         })
+    }
+
+    private fun getCreatedAddress(): Location {
+        if (bottomSheetBinding.etSearch.text.isNullOrEmpty()) {
+            return Location(
+                Utils.getUUID(),
+                "Address",
+                addressData?.latitude.toString(),
+                addressData?.longitude.toString(),
+                bottomSheetBinding.isDefault.isChecked,
+                Utils.getCurrentTime(),
+                Utils.getCurrentTime()
+            )
+
+
+        } else {
+            return Location(
+                Utils.getUUID(),
+                bottomSheetBinding.etSearch.text.toString(),
+                addressData?.latitude.toString(),
+                addressData?.longitude.toString(),
+                bottomSheetBinding.isDefault.isChecked,
+                Utils.getCurrentTime(),
+                Utils.getCurrentTime()
+            )
+        }
     }
 
 

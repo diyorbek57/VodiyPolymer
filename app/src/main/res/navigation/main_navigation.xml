@@ -91,7 +91,14 @@
         android:id="@+id/orderShippingAddressFragment"
         android:name="uz.ayizor.vp.fragment.orders.OrderShippingAddressFragment"
         android:label="fragment_shipping_address"
-        tools:layout="@layout/fragment_order_shipping_address" />
+        tools:layout="@layout/fragment_order_shipping_address" >
+        <action
+            app:launchSingleTop="true"
+            app:popUpTo="@+id/nav_cart"
+            app:popUpToInclusive="true"
+            android:id="@+id/action_orderShippingAddressFragment_to_checkoutActivity"
+            app:destination="@id/checkoutActivity" />
+    </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="uz.ayizor.vp.fragment.EditProfileFragment"
