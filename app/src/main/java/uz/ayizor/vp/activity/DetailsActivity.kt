@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -30,32 +31,34 @@ import uz.ayizor.vp.model.Product
 import uz.ayizor.vp.utils.Utils
 import java.math.BigDecimal
 
-class DetailsActivity : BaseActivity() {
+class DetailsActivity : AppCompatActivity() {
     lateinit var binding: ActivityDetailsBinding
-    val TAG: String = uz.ayizor.vp.activity.DetailsActivity::class.java.simpleName
+    val TAG: String = DetailsActivity::class.java.simpleName
 
     //variables
-    lateinit var id: String
     private var viewPager: ViewPager2? = null
     lateinit var viewPagerAdapter: ViewPagerAdapter
     private lateinit var database: DatabaseReference
     lateinit var product: Product
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         inits()
     }
 
     private fun inits() {
         database = Firebase.database.reference
+
         val extras = intent.extras
         if (extras != null) {
-            id = extras.getString("id").toString()
+            val id = extras.getString("id").toString()
             Log.e(TAG, "product id: " + id)
             getProduct(id)
         }
+
         setupQuantityStepper()
 
         binding.btnAddToCart.setOnClickListener {
@@ -68,7 +71,7 @@ class DetailsActivity : BaseActivity() {
             ?.let { binding.quantityStepper.value.times(it) }
         val product = Order(
             product.product_id,
-            UserPrefManager(context).loadUser()?.user_id,
+            UserPrefManager(this).loadUser()?.user_id,
             product.product_name,
             product.product_description,
             totalPrice.toString(),
@@ -99,7 +102,11 @@ class DetailsActivity : BaseActivity() {
             }
             .addOnFailureListener {
                 try {
-                    Utils.showErrorToast(this, "Product Not Added", "Error adding product to cart")
+                    Utils.showErrorToast(
+                        this,
+                        "Product Not Added",
+                        "Error adding product to cart"
+                    )
                 } catch (e: Exception) {
                     e.printStackTrace()
 
@@ -179,7 +186,7 @@ class DetailsActivity : BaseActivity() {
             //rating
             binding.tvRating.text = product_rating.toString()
             //solds
-            binding.tvSold.text = product_sold + " " + context.getString(R.string.sold)
+            binding.tvSold.text = product_sold + " " + getString(R.string.sold)
             //title
             binding.tvTitle.text = product_name
             //description
@@ -191,7 +198,7 @@ class DetailsActivity : BaseActivity() {
     }
 
     private fun setupViewPager(images: ArrayList<Image>) {
-        viewPagerAdapter = ViewPagerAdapter(images, context)
+        viewPagerAdapter = ViewPagerAdapter(images, this)
         viewPager?.currentItem = 0
         viewPager = binding.viewpager
         viewPager?.offscreenPageLimit = 3

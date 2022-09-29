@@ -4,23 +4,25 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import uz.ayizor.vp.R
 import uz.ayizor.vp.databinding.ItemProductBinding
 import uz.ayizor.vp.model.Product
-import com.bumptech.glide.Glide
 
 
 class ProductsAdapter(
     val context: Context,
-    var postsList: ArrayList<Product>,
+    private var postsList: ArrayList<Product>,
     private val onPostItemClickListener: OnPostItemClickListener
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<ProductsAdapter.ItemMainPostViewHolder>() {
 
 
     val TAG: String = ProductsAdapter::class.java.simpleName
     private lateinit var binding: ItemProductBinding
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemMainPostViewHolder {
 
         binding = ItemProductBinding.inflate(LayoutInflater.from(context), parent, false)
         return ItemMainPostViewHolder(binding)
@@ -29,9 +31,22 @@ class ProductsAdapter(
     }
 
     @SuppressLint("SetTextI18n")
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        with(holder) {
-            with(postsList[position]) {
+    override fun onBindViewHolder(holder: ItemMainPostViewHolder, position: Int) {
+        val product = postsList[position]
+        holder.bindProduct(product)
+
+    }
+
+    override fun getItemCount(): Int {
+        return postsList.size
+    }
+
+
+    inner class ItemMainPostViewHolder(val binding: ItemProductBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bindProduct(product: Product) {
+
+            with(product) {
 
                 //price
                 binding.tvPrice.text = "$product_price So'm"
@@ -52,29 +67,16 @@ class ProductsAdapter(
                 binding.llMain.setOnClickListener {
                     if (product_id != null) {
                         onPostItemClickListener.onPostItemClickListener(
-                            product_id
+                            product_id, binding
                         )
                     }
                 }
-
-
             }
-
-
         }
-
     }
-
-    override fun getItemCount(): Int {
-        return postsList.size
-    }
-
-
-    inner class ItemMainPostViewHolder(val binding: ItemProductBinding) :
-        RecyclerView.ViewHolder(binding.root)
 
     interface OnPostItemClickListener {
-        fun onPostItemClickListener(id: String)
+        fun onPostItemClickListener(id: String, binding: ItemProductBinding )
     }
 
 }

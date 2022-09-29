@@ -3,52 +3,57 @@ package uz.ayizor.vp.fragment
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.util.Pair.create
 import android.view.View
-import android.view.ViewGroup
+import uz.ayizor.vp.R
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.database.*
-
 import com.google.firebase.database.annotations.NotNull
 import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
 import com.youth.banner.indicator.CircleIndicator
-import uz.ayizor.vp.R
 import uz.ayizor.vp.activity.NotificationActivity
 import uz.ayizor.vp.adapter.CategoryAdapter
 import uz.ayizor.vp.adapter.ProductsAdapter
 import uz.ayizor.vp.databinding.FragmentHomeBinding
+import uz.ayizor.vp.databinding.ItemProductBinding
 import uz.ayizor.vp.model.Category
 import uz.ayizor.vp.model.Product
 import uz.ayizor.vp.utils.Logger
-import uz.ayizor.vp.utils.Utils
 
 
-class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
+class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostItemClickListener,
     CategoryAdapter.OnCategoryItemClickListener {
 
-    lateinit var binding: FragmentHomeBinding
+
+    private lateinit var binding: FragmentHomeBinding
+
     val TAG: String = HomeFragment::class.java.simpleName
+
+    //variables
     lateinit var product: Product
     lateinit var category: Category
     var database = FirebaseDatabase.getInstance()
     private var shortAnimationDuration: Int = 0
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentHomeBinding.bind(view)
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
+
         inits()
-        return binding.root
     }
+
 
     @SuppressLint("SimpleDateFormat")
     private fun inits() {
@@ -68,18 +73,28 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
             val intent = Intent(requireContext(), NotificationActivity::class.java)
             startActivity(intent)
         }
+        binding.flSearch.setOnClickListener {
+            val extras = FragmentNavigatorExtras(binding.flSearch to "search_field")
+            findNavController().navigate(
+                R.id.action_nav_home_to_searchFragment,
+                null,
+                null,
+                extras
+            )
+
+        }
 
         binding.ivFavorites.setOnClickListener {
-            for (i in 0 until 5) {
-                database.getReference("categories").push().setValue(
-                    Category(
-                        Utils.getUUID(),
-                        "test $i",
-                        Utils.getCurrentTime(),
-                        Utils.getCurrentTime()
-                    )
-                )
-            }
+//            for (i in 0 until 5) {
+//                database.getReference("categories").push().setValue(
+//                    Category(
+//                        Utils.getUUID(),
+//                        "test $i",
+//                        Utils.getCurrentTime(),
+//                        Utils.getCurrentTime()
+//                    )
+//                )
+//            }
 
         }
         getDiscountProducts()
@@ -114,9 +129,15 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
     @SuppressLint("NotifyDataSetChanged")
     private fun refreshProductsAdapter(products: ArrayList<Product>) {
         val adapter = ProductsAdapter(requireContext(), products, this)
-        binding.rvProducts.adapter = adapter
-        adapter.notifyDataSetChanged()
-        binding.progressBar.visibility = View.GONE
+        binding.rvProducts.apply {
+            binding.rvProducts.adapter = adapter
+            postponeEnterTransition()
+            viewTreeObserver
+                .addOnPreDrawListener {
+                    startPostponedEnterTransition()
+                    true
+                }
+        }
         binding.flSearch.visibility = View.VISIBLE
         binding.vpBanner.visibility = View.VISIBLE
 
@@ -135,7 +156,6 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
     }
 
     private fun getAllProducts() {
-        binding.progressBar.visibility = View.VISIBLE
         val productsList: ArrayList<Product> = ArrayList()
         val reference = database.getReference("products")
         reference.addValueEventListener(object : ValueEventListener {
@@ -151,12 +171,12 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
                     }
 
                     refreshProductsAdapter(productsList)
-                    showViewWithAnimations(binding.rvProducts)
+                    showViewWithAnimations(binding.nestedScrollView)
 
 
                 } else {
                     Logger.e(TAG, "getAllProducts: snapshot = null ")
-                    hideViewWithAnimations(binding.rvProducts)
+
                 }
             }
 
@@ -167,7 +187,6 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
     }
 
     private fun getProductByCategory(categoryId: String?) {
-        binding.progressBar.visibility = View.VISIBLE
         val productsList: ArrayList<Product> = ArrayList()
         val reference = database.getReference("products")
         val query: Query =
@@ -192,7 +211,7 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
 
                 } else {
                     Logger.e(TAG, "getProductByCategory: snapshot = null ")
-                    hideViewWithAnimations(binding.rvProducts)
+
                 }
             }
 
@@ -211,7 +230,14 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     categoriesList.clear()
-                    categoriesList.add(Category("all", getString(R.string.all), null, null))
+                    categoriesList.add(
+                        Category(
+                            "all",
+                            getString(uz.ayizor.vp.R.string.all),
+                            null,
+                            null
+                        )
+                    )
                     for (userSnapshot in snapshot.children) {
                         category = userSnapshot.getValue(Category::class.java)!!
                         if (category != null) {
@@ -260,10 +286,21 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
 
     }
 
-    override fun onPostItemClickListener(id: String) {
+    override fun onPostItemClickListener(id: String, binding: ItemProductBinding) {
         val intent = Intent(requireContext(), uz.ayizor.vp.activity.DetailsActivity::class.java)
         intent.putExtra("id", id)
-        startActivity(intent)
+        val imagePair = create<View, String>(binding.ivImage, "image_field")
+        val titlePair = create<View, String>(binding.tvTitle, "title_field")
+        val pricePair = create<View, String>(binding.tvPrice, "price_field")
+        val ratingPair = create<View, String>(binding.llRating, "rating_field")
+        val soldsPair = create<View, String>(binding.tvSold, "solds_field")
+
+        val options =
+            ActivityOptions.makeSceneTransitionAnimation(
+                requireActivity(),
+                imagePair
+            )
+        startActivity(intent, options.toBundle())
     }
 
     override fun onCategoryItemClickListener(id: String) {
@@ -275,6 +312,7 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
         }
 
     }
+
     private fun showViewWithAnimations(view: View) {
         view.apply {
             // Set the content view to 0% opacity but visible, so that it is visible
@@ -300,32 +338,7 @@ class HomeFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
                     binding.progressBar.visibility = View.GONE
                 }
             })
-    }
-    private fun hideViewWithAnimations(view: View) {
-        view.apply {
-            // Set the content view to 0% opacity but visible, so that it is visible
-            // (but fully transparent) during the animation.
-            alpha = 0f
-            visibility = View.GONE
 
-            // Animate the content view to 100% opacity, and clear any animation
-            // listener set on the view.
-            animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration.toLong())
-                .setListener(null)
-        }
-        // Animate the loading view to 0% opacity. After the animation ends,
-        // set its visibility to GONE as an optimization step (it won't
-        // participate in layout passes, etc.)
-        binding.progressBar.animate()
-            .alpha(0f)
-            .setDuration(shortAnimationDuration.toLong())
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    binding.progressBar.visibility = View.GONE
-                }
-            })
     }
 
 

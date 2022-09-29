@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dp"
-    tools:context=".activity.SearchActivity">
+    tools:context=".fragment.SearchFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,12 +17,13 @@
         android:weightSum="3">
 
         <RelativeLayout
+            android:id="@+id/fl_search"
             android:layout_width="match_parent"
+            android:transitionName="search_field"
             android:layout_height="wrap_content"
             android:background="@drawable/item_search_view_background"
             android:paddingHorizontal="25dp"
-            android:paddingVertical="10dp"
-            android:transitionName="search_field">
+            android:paddingVertical="10dp">
 
             <EditText
                 android:id="@+id/et_search"
@@ -32,6 +33,7 @@
                 android:background="@android:color/transparent"
                 android:hint="@string/search"
                 android:imeOptions="actionSearch"
+                android:maxLines="1"
                 android:inputType="text"
                 android:padding="3dp" />
 
@@ -41,30 +43,15 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/generalsans_semibold"
-            android:text="@string/search"
-            android:textColor="@color/very_dark_gray_mostly_black"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/tv_found"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:fontFamily="@font/generalsans_semibold"
-            android:textColor="@color/very_dark_gray_mostly_black"
-            android:textSize="18sp" />
-    </RelativeLayout>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_search_results"
+        android:visibility="gone"
+        tools:listitem="@layout/item_product"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_search_history"
+        tools:listitem="@layout/item_recent_searches"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

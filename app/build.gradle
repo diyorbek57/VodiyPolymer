@@ -46,7 +46,7 @@ android {
 
 dependencies {
     //navigation version
-    def nav_version = "2.4.2"
+    def nav_version = "2.5.2"
 //custom
     //firebase
     implementation platform('com.google.firebase:firebase-bom:30.3.1')
@@ -62,19 +62,19 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
     //coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
 
     //fragment
-    implementation 'androidx.fragment:fragment-ktx:1.5.2'
+    implementation 'androidx.fragment:fragment-ktx:1.5.3'
     //navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     //noinspection GradleDependency
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     //glide
-    implementation 'com.github.bumptech.glide:glide:4.13.1'
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
     //gson
-    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.9.1'
     //pinview
     implementation 'io.github.chaosleung:pinview:1.4.4'
     //banner
@@ -97,8 +97,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
     //
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.5.0'
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'

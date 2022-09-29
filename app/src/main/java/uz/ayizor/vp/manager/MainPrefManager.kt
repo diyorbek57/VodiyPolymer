@@ -2,6 +2,8 @@ package uz.ayizor.vp.manager
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class MainPrefManager(context: Context) {
 
@@ -33,6 +35,7 @@ class MainPrefManager(context: Context) {
     fun loadCurrency(): String? {
         return sharedPreferences!!.getString("currency", "")
     }
+
     fun storeLanguage(currency: String?) {
         val prefsEditor = sharedPreferences!!.edit()
         prefsEditor.putString("language", currency)
@@ -41,5 +44,26 @@ class MainPrefManager(context: Context) {
 
     fun loadLanguage(): String? {
         return sharedPreferences!!.getString("language", "")
+    }
+
+    fun storeSearchHistory(area: ArrayList<String>) {
+        val gson = Gson()
+        val json = gson.toJson(area)
+        val prefsEditor = sharedPreferences!!.edit()
+        prefsEditor.putString("search_history", json)
+        prefsEditor.apply()
+    }
+
+    fun loadSearchHistory(): ArrayList<String>? {
+        val gson = Gson()
+        val json: String? = sharedPreferences?.getString("search_history", null)
+        val type = object : TypeToken<ArrayList<String?>?>() {}.type
+        return try {
+            gson.fromJson(json, type) as ArrayList<String>
+        } catch (e: NullPointerException) {
+            null
+        }
+
+
     }
 }
