@@ -18,10 +18,11 @@ import com.mcdev.quantitizerlibrary.AnimationStyle
 import com.mcdev.quantitizerlibrary.HorizontalQuantitizer
 import com.mcdev.quantitizerlibrary.QuantitizerListener
 import uz.ayizor.vp.R
+import uz.ayizor.vp.model.Cart
 
 class CartAdapter(
     val context: Context,
-    var postsList: ArrayList<Order>
+    var postsList: ArrayList<Cart>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
@@ -42,20 +43,20 @@ class CartAdapter(
         @SuppressLint("RecyclerView") position: Int
     ) {
 
-        val product: Order = postsList[position]
+        val product: Cart = postsList[position]
         if (holder is CartViewHolder) {
             // holder.color.setBackgroundColor(Color.parseColor("#" + product.product_color))
 
             holder.delete.setOnClickListener {
-                if (product.product_id != null) {
-                    showDialogDouble(position, product.product_id)
+                if (product.cart_id != null) {
+                    showDialogDouble(position, product.cart_id)
                 }
             }
-            Glide.with(context).load(product.product_image?.get(0)?.image_url)
+            Glide.with(context).load(product.cart_product?.product_image?.get(0)?.image_url)
                 .placeholder(R.color.dark_gray).into(holder.image)
-            holder.description.text = product.product_description
-            holder.title.text = product.product_name
-            holder.total_price.text = product.product_total_price+" So'm"
+            holder.description.text = product.cart_product?.product_description
+            holder.title.text = product.cart_product?.product_name
+            holder.total_price.text = product.cart_product_total_price+" So'm"
             setupQuantityStepper(holder.quantitizer, product)
         }
 
@@ -80,7 +81,7 @@ class CartAdapter(
         })
     }
 
-    private fun setupQuantityStepper(quantityStepper: HorizontalQuantitizer, product: Order) {
+    private fun setupQuantityStepper(quantityStepper: HorizontalQuantitizer, product: Cart) {
         quantityStepper.textAnimationStyle = AnimationStyle.SWING
         quantityStepper.isReadOnly = false
         quantityStepper.setValueBackgroundColor(R.color.gray)
@@ -91,7 +92,7 @@ class CartAdapter(
         quantityStepper.minValue = 1
         quantityStepper.maxValue = 255
         quantityStepper.setIconWidthAndHeight(45, 45)
-        quantityStepper.value = product.product_total_quantity?.toInt()!!
+        quantityStepper.value = product.cart_product_total_quantity?.toInt()!!
         quantityStepper.setQuantitizerListener(object : QuantitizerListener {
             override fun onIncrease() {
             }
@@ -101,19 +102,19 @@ class CartAdapter(
             }
 
             override fun onValueChanged(value: Int) {
-                changeQuantity(value, product.product_id)
+                changeQuantity(value, product.cart_id)
             }
         })
     }
 
     private fun changeQuantity(value: Int, productId: String?) {
         val applesQuery: Query =
-            ref.child("carts").orderByChild("product_id").equalTo(productId)
+            ref.child("carts").orderByChild("cart_id").equalTo(productId)
 
         applesQuery.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (appleSnapshot in dataSnapshot.children) {
-                    appleSnapshot.ref.child("product_total_quantity").setValue(value.toString())
+                    appleSnapshot.ref.child("cart_product_total_quantity").setValue(value.toString())
                 }
             }
 

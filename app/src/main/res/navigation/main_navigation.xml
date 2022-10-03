@@ -94,7 +94,10 @@
         tools:layout="@layout/fragment_track_order" >
         <argument
             android:name="order"
-            app:argType="uz.ayizor.vp.model.Order" />
+            app:argType="uz.ayizor.vp.model.Cart" />
+        <argument
+            android:name="step"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/ongoingOrdersFragment"

@@ -5,18 +5,13 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Order(
-    val product_id: String? = null,
-    val product_user_id: String? = null,
-    val product_name: String? = null,
-    val product_description: String? = null,
-    val product_total_price: String? = null,
-    val product_total_quantity: String? = null,
-    val product_discount: String? = null,
-    val product_image: ArrayList<Image>? = null,
-    var product_location: Location? = null,
-    var product_isOrdered: Boolean = false,
-    var product_step: Int? = null,
-    val product_created_at: String? = null,
-    val product_updated_at: String? = null,
-    val courier_id: String? = null
+    val order_id: String? = null,
+    val ordert_user_id: String? = null,
+    var order_location: Location? = null,
+    var order_products: ArrayList<Cart>? = null,
+    var order_isOrdered: Boolean = false,
+    var order_step: Int? = null,
+    val order_created_at: String? = null,
+    val order_updated_at: String? = null,
+    val order_courier_id: String? = null
 ) : Parcelable

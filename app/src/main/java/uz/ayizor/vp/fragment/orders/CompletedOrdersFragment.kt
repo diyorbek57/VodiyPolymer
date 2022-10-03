@@ -19,6 +19,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.database.*
 import com.google.firebase.database.annotations.NotNull
 import uz.ayizor.vp.R
+import uz.ayizor.vp.model.Cart
+import uz.ayizor.vp.model.Product
 
 class CompletedOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickListener {
 
@@ -62,7 +64,7 @@ class CompletedOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickList
 
                         product = userSnapshot.getValue(Order::class.java)!!
                         if (product != null) {
-                            if (product.product_step == 3 && product.product_isOrdered)
+                            if (product.order_step == 3 && product.order_isOrdered)
                                 productsList.add(product)
                         }
 
@@ -96,23 +98,23 @@ Logger.e(TAG,"message: "+error.message + "code: "+error.code)
 
     }
 
-    override fun onActionButtonClickListener(order: Order) {
-        showReviewBottomSheet(order)
+    override fun onActionButtonClickListener(product: Cart, order_step:Int) {
+        showReviewBottomSheet(product)
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showReviewBottomSheet(order: Order) {
+    private fun showReviewBottomSheet(product: Cart) {
         val sheetDialog = BottomSheetDialog(mContext, R.style.AppBottomSheetDialogTheme)
         val bottomSheetBinding: ItemLeaveReviewBorromsheetBinding =
             ItemLeaveReviewBorromsheetBinding.inflate(layoutInflater)
         sheetDialog.setContentView(bottomSheetBinding.root)
 
-        bottomSheetBinding.tvPrice.text = order.product_total_price + " So'm"
+        bottomSheetBinding.tvPrice.text = product.cart_product_total_price + " So'm"
         bottomSheetBinding.tvQuantity.text =
-            getString(R.string.quantity) + " = " + order.product_total_quantity
-        Glide.with(mContext).load(order.product_image?.get(0)?.image_url)
+            getString(R.string.quantity) + " = " + product.cart_product_total_quantity
+        Glide.with(mContext).load(product.cart_product?.product_image?.get(0)?.image_url)
             .into(bottomSheetBinding.ivImage)
-        bottomSheetBinding.tvTitle.text = order.product_name
+        bottomSheetBinding.tvTitle.text = product.cart_product?.product_name
 
         bottomSheetBinding.btnSubmit.setOnClickListener {
 

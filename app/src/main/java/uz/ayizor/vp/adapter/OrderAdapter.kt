@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import uz.ayizor.vp.R
 import uz.ayizor.vp.databinding.ItemOrderProductBinding
+import uz.ayizor.vp.model.Cart
 import uz.ayizor.vp.model.Order
 
 
@@ -38,19 +39,31 @@ class OrderAdapter(
         if (holder is OrderViewHolder) {
             with(holder) {
 
-                binding.tvQuantity.text = "Quantity = " + product.product_total_quantity
-                Glide.with(context).load(product.product_image?.get(0)?.image_url)
+                binding.tvQuantity.text =
+                    "Quantity = " + product.order_products?.get(position)?.cart_product_total_quantity
+                Glide.with(context)
+                    .load(product.order_products?.get(position)?.cart_product?.product_image?.get(0)?.image_url)
                     .placeholder(R.color.dark_gray).into(binding.ivImage)
-                binding.tvTitle.text = product.product_name
-                binding.tvPrice.text = product.product_total_price + " So'm"
+                binding.tvTitle.text =
+                    product.order_products?.get(position)?.cart_product?.product_name
+                binding.tvPrice.text =
+                    product.order_products?.get(position)?.cart_product?.product_price + " So'm"
             }
             binding.tvOrderAction.setOnClickListener {
-                onActionButtonClickListener.onActionButtonClickListener(product)
+                product.order_products?.get(position)
+                    ?.let { it1 ->
+                        product.order_step?.let { it2 ->
+                            onActionButtonClickListener.onActionButtonClickListener(
+                                it1,
+                                it2
+                            )
+                        }
+                    }
             }
 
-            if (product.product_step == 3) {
+            if (product.order_step == 3) {
                 binding.tvOrderAction.text = context.getString(R.string.leave_review)
-            }else{
+            } else {
                 binding.tvOrderAction.text = context.getString(R.string.track_order)
             }
         }
@@ -67,6 +80,6 @@ class OrderAdapter(
         RecyclerView.ViewHolder(binding.root)
 
     interface OnActionButtonClickListener {
-        fun onActionButtonClickListener(order: Order)
+        fun onActionButtonClickListener(product: Cart, order_step: Int)
     }
 }

@@ -13,10 +13,11 @@ import uz.ayizor.vp.model.Order
 import com.bumptech.glide.Glide
 import com.google.firebase.database.*
 import uz.ayizor.vp.R
+import uz.ayizor.vp.model.Cart
 
 class CheckoutAdapter(
     val context: Context,
-    var postsList: ArrayList<Order>
+    var postsList: ArrayList<Cart>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
@@ -37,15 +38,15 @@ class CheckoutAdapter(
         @SuppressLint("RecyclerView") position: Int
     ) {
 
-        val product: Order = postsList[position]
+        val product: Cart = postsList[position]
         if (holder is CartViewHolder) {
 
-            holder.quantity.text = product.product_total_quantity
-            Glide.with(context).load(product.product_image?.get(0)?.image_url)
+            holder.quantity.text = product.cart_product_total_quantity
+            Glide.with(context).load(product.cart_product?.product_image?.get(0)?.image_url)
                 .placeholder(R.color.dark_gray).into(holder.image)
-            holder.description.text = product.product_description
-            holder.title.text = product.product_name
-            holder.total_price.text = product.product_total_price+" So'm"
+            holder.description.text = product.cart_product?.product_description
+            holder.title.text = product.cart_product?.product_name
+            holder.total_price.text = product.cart_product_total_price+" So'm"
         }
 
 

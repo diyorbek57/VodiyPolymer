@@ -3,6 +3,7 @@ package uz.ayizor.vp.fragment
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -23,9 +24,9 @@ import uz.ayizor.vp.adapter.CheckoutAdapter
 import uz.ayizor.vp.databinding.ActivityCheckoutBinding
 import uz.ayizor.vp.databinding.ItemSuccessfulDialogBinding
 import uz.ayizor.vp.manager.UserPrefManager
+import uz.ayizor.vp.model.Cart
 import uz.ayizor.vp.model.Location
 import uz.ayizor.vp.model.Order
-import uz.ayizor.vp.model.User
 import uz.ayizor.vp.utils.Logger
 import uz.ayizor.vp.utils.Utils
 
@@ -36,15 +37,17 @@ class CheckoutFragment : Fragment() {
     val TAG: String = CheckoutFragment::class.java.simpleName
     private val args: CheckoutFragmentArgs by navArgs()
     private lateinit var database: DatabaseReference
-    var productsList: ArrayList<Order> = ArrayList()
+    var productsList: ArrayList<Cart> = ArrayList()
     lateinit var selectedLocation: Location
     lateinit var location: Location
-    var user: User? = null
+    lateinit var order: Order
+    lateinit var mContext: Context
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = ActivityCheckoutBinding.inflate(inflater, container, false)
+        mContext = requireContext()
         getOrderList()
         inits()
         return binding.root
@@ -63,26 +66,26 @@ class CheckoutFragment : Fragment() {
             LinearLayoutManager.VERTICAL,
             false
         )
+
+
         binding.btnOrder.setOnClickListener {
-            selectedLocation = user?.user_location?.get(0)!!
-            for (i in 0 until productsList.size) {
-                productsList[i].product_location = selectedLocation
-                productsList[i].product_isOrdered = true
-                productsList[i].product_step = 1
-                database.child("orders").push().setValue(productsList[i]).addOnSuccessListener {
-                    deleteProduct(productsList[i].product_id.toString())
-                }
+            order = Order(Utils.getUUID(), UserPrefManager(mContext).loadUser()?.user_id,selectedLocation,productsList,true,1,Utils.getCurrentTime(),Utils.getCurrentTime())
+            database.child("orders").push().setValue(order).addOnSuccessListener {
+                for (i in 0 until productsList.size)
+                    productsList[i].cart_id?.let { it1 -> deleteProduct(it1) }
             }
             showDialog()
         }
 
         binding.rlChangeLocations.setOnClickListener {
-            val action = CheckoutFragmentDirections.actionCheckoutActivityToOrderShippingAddressFragment()
+            val action =
+                CheckoutFragmentDirections.actionCheckoutActivityToOrderShippingAddressFragment()
             findNavController().navigate(action)
         }
 
 
     }
+
     private fun getAddresses() {
         val reference = FirebaseDatabase.getInstance().reference
         val query: Query =
@@ -94,7 +97,8 @@ class CheckoutFragment : Fragment() {
                 if (snapshot.exists()) {
 
                     for (userSnapshot in snapshot.children) {
-                        userSnapshot.ref.child("user_location").orderByChild("location_isDefault").equalTo(true)
+                        userSnapshot.ref.child("user_location").orderByChild("location_isDefault")
+                            .equalTo(true)
                             .addValueEventListener(object : ValueEventListener {
                                 override fun onDataChange(snapshot: DataSnapshot) {
                                     if (snapshot.exists()) {
@@ -103,7 +107,8 @@ class CheckoutFragment : Fragment() {
                                                 TAG,
                                                 "locationSnapshot: " + locationSnapshot.toString()
                                             )
-                                            location = locationSnapshot.getValue(Location::class.java)!!
+                                            location =
+                                                locationSnapshot.getValue(Location::class.java)!!
 
                                         }
                                     }
@@ -129,6 +134,7 @@ class CheckoutFragment : Fragment() {
         })
 
     }
+
     @SuppressLint("SetTextI18n")
     private fun showDialog() {
         // Inflate dialog main
@@ -157,7 +163,7 @@ class CheckoutFragment : Fragment() {
     }
 
 
-    private fun refreshCartAdapter(products: ArrayList<Order>) {
+    private fun refreshCartAdapter(products: ArrayList<Cart>) {
         val adapter = CheckoutAdapter(requireContext(), products)
         binding.rvCart.adapter = adapter
         binding.progressBar.visibility = View.GONE
@@ -165,10 +171,10 @@ class CheckoutFragment : Fragment() {
 
     }
 
-    private fun deleteProduct( id: String) {
+    private fun deleteProduct(id: String) {
 
         val applesQuery: Query =
-            database.child("carts").orderByChild("product_id").equalTo(id)
+            database.child("carts").orderByChild("cart_id").equalTo(id)
 
         applesQuery.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {

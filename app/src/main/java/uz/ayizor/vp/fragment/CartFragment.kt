@@ -18,6 +18,7 @@ import uz.ayizor.vp.model.Order
 import uz.ayizor.vp.model.listmodel.OrdersList
 import com.google.firebase.database.*
 import com.google.firebase.database.annotations.NotNull
+import uz.ayizor.vp.model.Cart
 import uz.ayizor.vp.model.Location
 import uz.ayizor.vp.model.User
 
@@ -25,8 +26,8 @@ class CartFragment : Fragment() {
 
     lateinit var binding: FragmentCartBinding
     val TAG: String = CartFragment::class.java.simpleName
-    lateinit var product: Order
-    val productsList: ArrayList<Order> = ArrayList()
+    lateinit var product: Cart
+    val productsList: ArrayList<Cart> = ArrayList()
     var totalPrice = 0
     lateinit var address: Location
     val addressList: ArrayList<Location> = ArrayList()
@@ -65,7 +66,7 @@ class CartFragment : Fragment() {
 
     }
 
-    private fun refreshCartAdapter(products: ArrayList<Order>) {
+    private fun refreshCartAdapter(products: ArrayList<Cart>) {
         val adapter = CartAdapter(mContext, products)
         binding.rvCart.adapter = adapter
         binding.progressBar.visibility = View.GONE
@@ -88,10 +89,8 @@ class CartFragment : Fragment() {
                     productsList.clear()
 
                     for (userSnapshot in snapshot.children) {
-                        product = userSnapshot.getValue(Order::class.java)!!
+                        product = userSnapshot.getValue(Cart::class.java)!!
                         if (product != null) {
-                            Log.e(TAG, product.toString())
-                            Log.e(TAG, product.product_total_price.toString())
                             productsList.add(product)
                         }
                     }
@@ -168,12 +167,12 @@ class CartFragment : Fragment() {
     }
 
 
-    private fun getTotalPrice(products: ArrayList<Order>) {
+    private fun getTotalPrice(products: ArrayList<Cart>) {
         Logger.e(TAG, "getTotalPrice")
         totalPrice = 0
         for (i in 0 until products.size) {
 
-            val price = products[i].product_total_price
+            val price = products[i].cart_product_total_price
             Logger.e(TAG, price.toString())
             if (price != null) {
                 totalPrice += price.toInt()

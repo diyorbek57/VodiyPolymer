@@ -9,14 +9,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import uz.ayizor.vp.adapter.OrderAdapter
-import uz.ayizor.vp.databinding.FragmentOngoingBinding
-import uz.ayizor.vp.manager.UserPrefManager
-import uz.ayizor.vp.model.Order
 import com.google.firebase.database.*
 import com.google.firebase.database.annotations.NotNull
-import uz.ayizor.vp.R
+import uz.ayizor.vp.adapter.OrderAdapter
+import uz.ayizor.vp.databinding.FragmentOngoingBinding
 import uz.ayizor.vp.fragment.OrdersFragmentDirections
+import uz.ayizor.vp.manager.UserPrefManager
+import uz.ayizor.vp.model.Cart
+import uz.ayizor.vp.model.Order
 
 class OngoingOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickListener {
 
@@ -30,7 +30,7 @@ class OngoingOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickListen
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentOngoingBinding.inflate(inflater, container, false)
-        mContext= requireContext()
+        mContext = requireContext()
         inits()
         return binding.root
     }
@@ -59,21 +59,21 @@ class OngoingOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickListen
 
                         product = userSnapshot.getValue(Order::class.java)!!
                         if (product != null) {
-                            if (product.product_step!! > 0 && product.product_isOrdered)
+                            if (product.order_step!! > 0 && product.order_isOrdered)
                                 productsList.add(product)
                         }
 
 
                     }
-                    if (productsList.isNotEmpty()){
+                    if (productsList.isNotEmpty()) {
                         refreshOrdersAdapter(productsList)
-                    }else{
+                    } else {
                         binding.progressBar.visibility = View.GONE
                         binding.emptyState.llEmpty.visibility = View.VISIBLE
                     }
 
 
-                }else{
+                } else {
                     binding.progressBar.visibility = View.GONE
                     binding.emptyState.llEmpty.visibility = View.VISIBLE
                 }
@@ -90,8 +90,8 @@ class OngoingOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickListen
 
     }
 
-    override fun onActionButtonClickListener(order: Order) {
-        val action = OrdersFragmentDirections.actionNavOrdersToTrackOrderFragment(order)
+    override fun onActionButtonClickListener(product: Cart, order_step: Int) {
+        val action = OrdersFragmentDirections.actionNavOrdersToTrackOrderFragment(product,order_step)
         findNavController().navigate(action)
     }
 

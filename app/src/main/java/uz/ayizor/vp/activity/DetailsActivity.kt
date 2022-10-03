@@ -25,8 +25,8 @@ import uz.ayizor.vp.R
 import uz.ayizor.vp.adapter.ViewPagerAdapter
 import uz.ayizor.vp.databinding.ActivityDetailsBinding
 import uz.ayizor.vp.manager.UserPrefManager
+import uz.ayizor.vp.model.Cart
 import uz.ayizor.vp.model.Image
-import uz.ayizor.vp.model.Order
 import uz.ayizor.vp.model.Product
 import uz.ayizor.vp.utils.Utils
 import java.math.BigDecimal
@@ -69,21 +69,14 @@ class DetailsActivity : AppCompatActivity() {
     private fun addToCart() {
         val totalPrice = product.product_price?.toInt()
             ?.let { binding.quantityStepper.value.times(it) }
-        val product = Order(
-            product.product_id,
+        val product = Cart(
+            Utils.getUUID(),
+            product,
             UserPrefManager(this).loadUser()?.user_id,
-            product.product_name,
-            product.product_description,
             totalPrice.toString(),
             binding.quantityStepper.value.toString(),
-            product.product_discount,
-            product.product_image,
-            null,
-            false,
-            0,
             Utils.getCurrentTime(),
-            Utils.getCurrentTime(),
-            null
+            Utils.getCurrentTime()
         )
 
         database.child("carts").push().setValue(product)
