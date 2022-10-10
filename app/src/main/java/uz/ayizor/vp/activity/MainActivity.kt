@@ -32,6 +32,7 @@ class MainActivity : BaseActivity() {
     val addressList: ArrayList<Location> = ArrayList()
     lateinit var address: Location
     private lateinit var connectivityObserver: ConnectivityObserver
+    val reference = FirebaseDatabase.getInstance().reference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -59,10 +60,10 @@ class MainActivity : BaseActivity() {
     private fun inits() {
         val extras = intent.extras
         if (extras != null) {
-            val user_id = extras.getString("user_phone_number")
+            val phone_number = extras.getString("user_phone_number")
             try {
-                if (user_id != null) {
-                    getUserDatas(user_id)
+                if (phone_number != null) {
+                    getUserDatas(phone_number)
                 }
             } catch (e: Exception) {
                 Logger.e(TAG, e.stackTraceToString())
@@ -79,85 +80,23 @@ class MainActivity : BaseActivity() {
 
     }
 
-    private fun getUserDatas(id: String) {
+    private fun getUserDatas(phone_number: String) {
 
-        val reference = FirebaseDatabase.getInstance().reference
-        val query: Query =
+        val userQuery: Query =
             reference.child("users").orderByChild("user_phone_number")
-                .equalTo(id)
-        query.addValueEventListener(object : ValueEventListener {
+                .equalTo(phone_number)
+        userQuery.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-
-
                     for (userSnapshot in snapshot.children) {
-                        val user_id: String? =
-                            userSnapshot.child("user_id").getValue(String::class.java)
-                        Logger.e(TAG, user_id.toString())
-                        val user_first_name: String? =
-                            userSnapshot.child("user_first_name").getValue(String::class.java)
-                        val user_last_name: String? =
-                            userSnapshot.child("user_last_name").getValue(String::class.java)
-                        val user_company_name: String? =
-                            userSnapshot.child("user_company_name").getValue(String::class.java)
-                        val user_phone_number: String? =
-                            userSnapshot.child("user_phone_number").getValue(String::class.java)
-                        val user_device_id: String? =
-                            userSnapshot.child("user_device_id").getValue(String::class.java)
-                        val user_device_token: String? =
-                            userSnapshot.child("user_device_token").getValue(String::class.java)
-                        val user_created_at: String? =
-                            userSnapshot.child("user_created_at").getValue(String::class.java)
-                        val user_updated_at: String? =
-                            userSnapshot.child("user_updated_at").getValue(String::class.java)
-                        userSnapshot.ref.child("user_location")
-                            .addValueEventListener(object : ValueEventListener {
-                                override fun onDataChange(snapshot: DataSnapshot) {
-                                    if (snapshot.exists()) {
 
+                        user = userSnapshot.getValue(User::class.java)!!
 
-                                        for (locationSnapshot in snapshot.children) {
-                                            Logger.e(
-                                                TAG,
-                                                "locationSnapshot: " + locationSnapshot.toString()
-                                            )
-                                            address =
-                                                locationSnapshot.getValue(Location::class.java)!!
-
-
-                                            address.location_name?.let { Log.e(TAG, it) }
-                                            addressList.add(address)
-                                        }
-                                    }
-
-                                    user = User(
-                                        user_id,
-                                        user_first_name,
-                                        user_last_name,
-                                        user_company_name,
-                                        user_phone_number,
-                                        user_device_id,
-                                        user_device_token,
-                                        addressList,
-                                        null,
-                                        user_created_at,
-                                        user_updated_at
-                                    )
-                                    if (!user.user_id.isNullOrEmpty()) {
-                                        UserPrefManager(this@MainActivity).storeUser(user)
-                                    }
-
-
-                                }
-
-                                override fun onCancelled(error: DatabaseError) {
-                                    TODO("Not yet implemented")
-                                }
-
-                            })
-
-
+                    }
+                    if (!user.user_id.isNullOrEmpty()) {
+                        getUserLocations(user.user_id.toString())
+                        UserPrefManager(this@MainActivity).storeUser(user)
                     }
 
                 } else {
@@ -168,6 +107,44 @@ class MainActivity : BaseActivity() {
             override fun onCancelled(@NotNull error: DatabaseError) {
                 Log.e(TAG, "NO DATA")
             }
+        })
+
+
+    }
+
+    fun getUserLocations(user_id: String) {
+        val locationsQuery: Query =
+            reference.child("users_locations").orderByChild("location_user_id")
+                .equalTo(user_id)
+        locationsQuery.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+
+
+                    for (locationSnapshot in snapshot.children) {
+                        Logger.e(
+                            TAG,
+                            "locationSnapshot: " + locationSnapshot.toString()
+                        )
+                        address =
+                            locationSnapshot.getValue(Location::class.java)!!
+
+
+                        address.location_name?.let { Log.e(TAG, it) }
+                        addressList.add(address)
+                    }
+
+                    UserPrefManager(this@MainActivity).storeUserLocations(addressList)
+                }
+
+
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
         })
     }
 

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Vodiy Polymer</string>
     <string name="dummy_text" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec posuere rhoncus aliquam. Vivamus luctus velit rhoncus felis rhoncus, a convallis diam sollicitudin. Donec vitae magna varius, congue ante quis, semper dui. Integer lectus sapien, convallis a purus ac, aliquet posuere lacus. Nam sed mauris at sapien convallis venenatis. Nullam at gravida dolor. Fusce scelerisque, ante finibus faucibus dictum, sem erat dignissim mi, vel tincidunt ante nisi ac magna. Pellentesque vestibulum placerat sapien, eu fringilla mi sodales ac. Fusce mi diam, volutpat sit amet faucibus quis, suscipit ut urna. Maecenas lacinia eleifend leo, sit amet mollis diam vestibulum vehicula. Suspendisse ullamcorper, arcu tempus ullamcorper luctus, sapien lectus tempor sem, eget mattis ipsum est in erat. In ut finibus nisi. Aliquam at tincidunt elit. Integer bibendum laoreet diam sed aliquam. Suspendisse gravida malesuada urna, vehicula sodales massa vestibulum non.
@@ -21,6 +22,8 @@
     <string name="cancle">Cancle</string>
     <string name="confirm">Confirm</string>
     <string name="notification">Notification</string>
+
+
     <string name="description">Description</string>
     <string name="add_to_cart">Add to Cart</string>
     <string name="sold">sold</string>
@@ -78,13 +81,12 @@
     <string name="order_confirmed">Order confirmed</string>
     <string name="order_shipped">Order shipped</string>
     <string name="order_delivered">Order delivered</string>
-    <string name="logout">Logout</string>
-    <string name="are_you_sure_you_want_to_log_out">Are you sure you want to log out?</string>
-    <string name="yes_logout">Yes, Logout</string>
-    <string name="edit_profile">Edit Profile</string>
-    <string name="all">All</string>
-    <string name="save">Save</string>
-    <string name="delete">Delete</string>
-    <string name="current">Current</string>
-
+    <string name="logout">Выйти</string>
+    <string name="are_you_sure_you_want_to_log_out">Вы действительно хотите выйти?</string>
+    <string name="yes_logout">Да, выйти</string>
+    <string name="edit_profile">Редактировать</string>
+    <string name="all">Все</string>
+    <string name="save">Сохранять</string>
+    <string name="delete">Удалить</string>
+    <string name="current">Текуший</string>
 </resources>

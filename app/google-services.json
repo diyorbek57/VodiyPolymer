@@ -38,6 +38,57 @@
             {
               "client_id": "179377764678-ihq0aat43ll6lfv5lavnq0k7r10md07s.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "179377764678-8f6aaannfdo0i296c33fl5o1fqoidpno.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "uz.ayizor.VodiyPolymer"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:179377764678:android:4e8ff233ef219f3499cd47",
+        "android_client_info": {
+          "package_name": "uz.vodiypolymer.vpa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "179377764678-nj282l62gbvdvg18jmtvenef23en7hts.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "uz.vodiypolymer.vpa",
+            "certificate_hash": "b76b9731d5eaacf21214261f8f9b3576be034402"
+          }
+        },
+        {
+          "client_id": "179377764678-ihq0aat43ll6lfv5lavnq0k7r10md07s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3hzkTFTnwUKT2cpoM6MTYY1q48k1BpN8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "179377764678-ihq0aat43ll6lfv5lavnq0k7r10md07s.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "179377764678-8f6aaannfdo0i296c33fl5o1fqoidpno.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "uz.ayizor.VodiyPolymer"
+              }
             }
           ]
         }

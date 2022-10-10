@@ -6,6 +6,8 @@ import android.app.Application
 import android.app.Dialog
 import android.content.Context
 import android.content.Context.WINDOW_SERVICE
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.location.Geocoder
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -24,8 +26,6 @@ import androidx.core.content.res.ResourcesCompat
 import uz.ayizor.vp.R
 import uz.ayizor.vp.model.helpermodel.CustomLocation
 import uz.ayizor.vp.model.helpermodel.ScreenSize
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
 import www.sanju.motiontoast.MotionToast
 import www.sanju.motiontoast.MotionToastStyle
 import java.text.ParseException
@@ -129,7 +129,8 @@ object Utils {
             val geocoder = Geocoder(context, Locale.getDefault());
             val addresses = geocoder.getFromLocation(latitude, longitude, 1);
             val address =
-                addresses?.get(0)?.getAddressLine(0) // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                addresses?.get(0)
+                    ?.getAddressLine(0) // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
 
             val city = addresses?.get(0)?.locality
             val state = addresses?.get(0)?.adminArea
@@ -137,7 +138,7 @@ object Utils {
             val postalCode = addresses?.get(0)?.postalCode
             val knownName = addresses?.get(0)?.featureName // Only if available else return NULL
 
-            return CustomLocation(address,city, state, country, postalCode, knownName)
+            return CustomLocation(address, city, state, country, postalCode, knownName)
         } catch (e: Exception) {
             e.printStackTrace()
             return null
@@ -195,7 +196,6 @@ object Utils {
     }
 
 
-
     fun showSuccessToast(activity: Activity, title: String, message: String) {
         MotionToast.darkToast(
             activity,
@@ -242,6 +242,16 @@ object Utils {
             MotionToast.LONG_DURATION,
             ResourcesCompat.getFont(activity, R.font.generalsans_semibold)
         )
+    }
+
+    fun setLocaleLanguage(activity: Activity, languageCode: String?): Configuration {
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        val resources: Resources = activity.resources
+        val config: Configuration = resources.configuration
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
+        return config
     }
 
 

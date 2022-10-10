@@ -71,7 +71,7 @@ class DetailsActivity : AppCompatActivity() {
             ?.let { binding.quantityStepper.value.times(it) }
         val product = Cart(
             Utils.getUUID(),
-            product,
+            product.product_id,
             UserPrefManager(this).loadUser()?.user_id,
             totalPrice.toString(),
             binding.quantityStepper.value.toString(),

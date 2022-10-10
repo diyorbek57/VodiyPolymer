@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.database.*
+import com.google.firebase.database.annotations.NotNull
 import uz.ayizor.vp.activity.MainActivity
 import uz.ayizor.vp.databinding.FragmentSignInBinding
 import uz.ayizor.vp.manager.UserPrefManager
-import com.google.firebase.database.*
-import com.google.firebase.database.annotations.NotNull
 
 
 class SignInFragment : Fragment() {
@@ -27,14 +27,19 @@ class SignInFragment : Fragment() {
     ): View? {
         binding = FragmentSignInBinding.inflate(inflater, container, false)
 
-
-        if (!UserPrefManager(requireContext()).loadUser()?.user_id.isNullOrEmpty()){
-            val intent = Intent(requireContext(), MainActivity::class.java)
-            startActivity(intent)
-           activity?.finish()
-        }else{
+        try {
+            if (!UserPrefManager(requireContext()).loadUser()?.user_id.isNullOrEmpty()) {
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                startActivity(intent)
+                activity?.finish()
+            } else {
+                inits()
+            }
+        } catch (e: Exception) {
+            uz.ayizor.vp.utils.Logger.e(TAG, e.message.toString())
             inits()
         }
+
 
         return binding.root
     }
@@ -46,6 +51,7 @@ class SignInFragment : Fragment() {
         }
 
         binding.btnSignin.setOnClickListener {
+            uz.ayizor.vp.utils.Logger.e(TAG, "SignIn Button clicked")
             binding.btnSignin.startAnimation()
             checkUser()
         }
@@ -66,6 +72,7 @@ class SignInFragment : Fragment() {
             .equalTo(binding.tilNumber.editText?.text.toString())
         query.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+                uz.ayizor.vp.utils.Logger.e(TAG, snapshot.exists().toString())
                 if (snapshot.exists()) {
                     binding.btnSignin.dispose()
                     callCodeConfirmFragment(
@@ -82,7 +89,10 @@ class SignInFragment : Fragment() {
                 }
             }
 
-            override fun onCancelled(@NotNull error: DatabaseError) {}
+            override fun onCancelled(@NotNull error: DatabaseError) {
+                uz.ayizor.vp.utils.Logger.e(TAG, error.message)
+            }
+
         })
     }
 

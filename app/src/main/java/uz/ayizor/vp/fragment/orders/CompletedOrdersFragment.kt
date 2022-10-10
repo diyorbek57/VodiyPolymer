@@ -3,38 +3,42 @@ package uz.ayizor.vp.fragment.orders
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import uz.ayizor.vp.utils.Logger
-import uz.ayizor.vp.adapter.OrderAdapter
-import uz.ayizor.vp.databinding.FragmentCompletedBinding
-import uz.ayizor.vp.databinding.ItemLeaveReviewBorromsheetBinding
-import uz.ayizor.vp.manager.UserPrefManager
-import uz.ayizor.vp.model.Order
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.database.*
 import com.google.firebase.database.annotations.NotNull
 import uz.ayizor.vp.R
+import uz.ayizor.vp.adapter.CartAdapter
+import uz.ayizor.vp.adapter.CompletedOrdersAdapter
+import uz.ayizor.vp.adapter.OrderAdapter
+import uz.ayizor.vp.databinding.FragmentCompletedBinding
+import uz.ayizor.vp.databinding.ItemLeaveReviewBorromsheetBinding
+import uz.ayizor.vp.manager.UserPrefManager
 import uz.ayizor.vp.model.Cart
+import uz.ayizor.vp.model.Order
 import uz.ayizor.vp.model.Product
+import uz.ayizor.vp.utils.Logger
 
-class CompletedOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickListener {
+class CompletedOrdersFragment : Fragment(), CompletedOrdersAdapter.OnActionButtonClickListener {
 
     lateinit var binding: FragmentCompletedBinding
-    val TAG: String = OngoingOrdersFragment::class.java.simpleName
+    val TAG: String = CompletedOrdersFragment::class.java.simpleName
     lateinit var product: Order
     val productsList: ArrayList<Order> = ArrayList()
     lateinit var mContext: Context
+    val ref = FirebaseDatabase.getInstance().reference
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentCompletedBinding.inflate(inflater, container, false)
-        mContext= requireContext()
+        mContext = requireContext()
         inits()
 
         return binding.root
@@ -51,9 +55,9 @@ class CompletedOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickList
     }
 
     private fun getOrders() {
-        val reference = FirebaseDatabase.getInstance().getReference("carts")
+        val reference = FirebaseDatabase.getInstance().getReference("orders")
         val query: Query =
-            reference.orderByChild("product_user_id")
+            reference.orderByChild("order_user_id")
                 .equalTo(UserPrefManager(mContext).loadUser()?.user_id)
         query.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
@@ -63,58 +67,65 @@ class CompletedOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickList
                     for (userSnapshot in snapshot.children) {
 
                         product = userSnapshot.getValue(Order::class.java)!!
+                        Logger.e(TAG,product.toString())
                         if (product != null) {
                             if (product.order_step == 3 && product.order_isOrdered)
                                 productsList.add(product)
                         }
 
                     }
-                    if(productsList.isNotEmpty()){
+                    if (productsList.isNotEmpty()) {
                         refreshOrdersAdapter(productsList)
-                    }else{
+                    } else {
                         binding.progressBar.visibility = View.GONE
                         binding.emptyState.llEmpty.visibility = View.VISIBLE
                     }
 
 
-                }else{
+                } else {
                     binding.progressBar.visibility = View.GONE
                     binding.emptyState.llEmpty.visibility = View.VISIBLE
                 }
             }
 
             override fun onCancelled(@NotNull error: DatabaseError) {
-Logger.e(TAG,"message: "+error.message + "code: "+error.code)
+                Logger.e(TAG, "message: " + error.message + "code: " + error.code)
                 binding.progressBar.visibility = View.GONE
                 binding.emptyState.llEmpty.visibility = View.VISIBLE
             }
         })
     }
 
-    private fun refreshOrdersAdapter(products: ArrayList<Order>) {
-        val adapter = OrderAdapter(mContext, products, this)
+    private fun refreshOrdersAdapter(orders: ArrayList<Order>) {
+        val adapter = CompletedOrdersAdapter(mContext, orders, this)
         binding.rvCompletedOrders.adapter = adapter
         binding.progressBar.visibility = View.GONE
+        binding.rvCompletedOrders.visibility =View.VISIBLE
 
     }
 
-    override fun onActionButtonClickListener(product: Cart, order_step:Int) {
-        showReviewBottomSheet(product)
+    override fun onActionButtonClickListener(order: Order) {
+        getProduct(order)
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showReviewBottomSheet(product: Cart) {
+    private fun showReviewBottomSheet(order: Order,product: Product) {
+        with(product){
+
+        with(order){
+
+
         val sheetDialog = BottomSheetDialog(mContext, R.style.AppBottomSheetDialogTheme)
         val bottomSheetBinding: ItemLeaveReviewBorromsheetBinding =
             ItemLeaveReviewBorromsheetBinding.inflate(layoutInflater)
         sheetDialog.setContentView(bottomSheetBinding.root)
 
-        bottomSheetBinding.tvPrice.text = product.cart_product_total_price + " So'm"
+        bottomSheetBinding.tvPrice.text = "$order_total_price So'm"
         bottomSheetBinding.tvQuantity.text =
-            getString(R.string.quantity) + " = " + product.cart_product_total_quantity
-        Glide.with(mContext).load(product.cart_product?.product_image?.get(0)?.image_url)
+            getString(R.string.quantity) + " = " + order_total_quantity
+        Glide.with(mContext).load(product_image?.get(0)?.image_url)
             .into(bottomSheetBinding.ivImage)
-        bottomSheetBinding.tvTitle.text = product.cart_product?.product_name
+        bottomSheetBinding.tvTitle.text = product_name
 
         bottomSheetBinding.btnSubmit.setOnClickListener {
 
@@ -123,6 +134,32 @@ Logger.e(TAG,"message: "+error.message + "code: "+error.code)
 
         sheetDialog.show();
         sheetDialog.window?.attributes?.windowAnimations = R.style.DialogAnimaton;
+        }
+        }
+    }
 
+    private fun getProduct(order: Order) {
+        var product: Product? = null
+        val productListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (postSnapshot in dataSnapshot.children) {
+
+                    product = postSnapshot.getValue(Product::class.java)
+
+                }
+                if (product != null) {
+                    showReviewBottomSheet(order,product!!)
+                }
+
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost: onCancelled", databaseError.toException())
+            }
+        }
+        ref.child("products").orderByChild("product_id").equalTo(order.order_product_id)
+            .addValueEventListener(productListener)
     }
 }

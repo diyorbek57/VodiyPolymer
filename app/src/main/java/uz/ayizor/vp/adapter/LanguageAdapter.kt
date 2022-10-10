@@ -5,60 +5,41 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import uz.ayizor.vp.R
+import uz.ayizor.vp.databinding.ItemChooseLanguageBinding
+import uz.ayizor.vp.manager.MainPrefManager
 import uz.ayizor.vp.model.Language
+import uz.ayizor.vp.utils.Logger
+
 
 class LanguageAdapter(
     var context: Context,
     var arrayList: ArrayList<Language>,
-    var onRadioButtonClickListener: OnRadioButtonClickListener
-) : RecyclerView.Adapter<LanguageAdapter.ViewHolder>() {
-    var selectedPosition = -1
+    var onItemClickListener: OnItemClickListener
+) : RecyclerView.Adapter<LanguageAdapter.LanguageViewHolder>() {
+
+
+    val TAG: String = LanguageAdapter::class.java.simpleName
+    private lateinit var binding: ItemChooseLanguageBinding
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ViewHolder {
-        // Initialize view
-        val view: View = LayoutInflater.from(parent.context)
-            .inflate(
-                R.layout.item_choose_language, parent,
-                false
-            )
-        // Pass holder view
-        return ViewHolder(view)
+    ): LanguageAdapter.LanguageViewHolder {
+
+        binding = ItemChooseLanguageBinding.inflate(LayoutInflater.from(context), parent, false)
+        return LanguageViewHolder(binding)
+
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(
-        holder: ViewHolder,
-        position: Int
+        holder: LanguageViewHolder,
+        @SuppressLint("RecyclerView") position: Int
     ) {
         val language = arrayList[position]
-        // Set text on radio button
-        holder.title.text = language.language_name
-        // Checked selected radio button
-        holder.radioButton.isChecked = (position == selectedPosition)
-
-        // set listener on radio button
-        holder.radioButton.setOnCheckedChangeListener { compoundButton, b ->
-            // check condition
-            if (b) {
-                // When checked
-                // update selected position
-                selectedPosition = position
-                // Call listener
-
-                language.language_code?.let {
-                    onRadioButtonClickListener.onRadioButtonClickListener(
-                        it
-                    )
-                }
-
-            }
-        }
+        holder.bindLanguage(language)
 
     }
 
@@ -68,21 +49,35 @@ class LanguageAdapter(
         return arrayList.size
     }
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Initialize variable
-        var radioButton: RadioButton
-        var title: TextView
+    inner class LanguageViewHolder(val binding: ItemChooseLanguageBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("NotifyDataSetChanged")
+        fun bindLanguage(language: Language) {
+
+            with(language) {
+
+                binding.tvTitle.text = language_name
+
+                language_isSelected = MainPrefManager(context).loadLanguage() == language_code
+
+                binding.mainCv.setOnClickListener {
+                    notifyDataSetChanged()
+                    onItemClickListener.onItemClickListener(language_code.toString())
+                }
 
 
-        init {
+                if (MainPrefManager(context).loadLanguage() == language_code && language_isSelected==true) {
+                    binding.tvSelected.text = context.getString(R.string.current)
+                } else {
+                    binding.tvSelected.text =""
+                }
 
-            // Assign variable
-            radioButton = itemView.findViewById(R.id.radio_button)
-            title = itemView.findViewById(R.id.tv_title)
+            }
         }
     }
 
-    interface OnRadioButtonClickListener {
-        fun onRadioButtonClickListener(code: String)
+    interface OnItemClickListener {
+        fun onItemClickListener(language_code: String)
     }
 }
+

@@ -36,10 +36,10 @@ class MainPrefManager(context: Context) {
         return sharedPreferences!!.getString("currency", "")
     }
 
-    fun storeLanguage(currency: String?) {
+    fun storeLanguage(language: String?) {
         val prefsEditor = sharedPreferences!!.edit()
-        prefsEditor.putString("language", currency)
-        prefsEditor.apply()
+        prefsEditor.putString("language", language)
+        prefsEditor.commit()
     }
 
     fun loadLanguage(): String? {
@@ -51,7 +51,7 @@ class MainPrefManager(context: Context) {
         val json = gson.toJson(area)
         val prefsEditor = sharedPreferences!!.edit()
         prefsEditor.putString("search_history", json)
-        prefsEditor.apply()
+        prefsEditor.commit()
     }
 
     fun loadSearchHistory(): ArrayList<String>? {

@@ -17,30 +17,30 @@ import uz.ayizor.vp.model.Order
 import uz.ayizor.vp.model.Product
 
 
-class OrderAdapter(
+class CompletedOrdersAdapter(
     private val context: Context,
     private var orderList: ArrayList<Order>,
     private val onActionButtonClickListener: OnActionButtonClickListener
-) : RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
+) : RecyclerView.Adapter<CompletedOrdersAdapter.CompletedOrdersHolder>() {
 
 
-    val TAG: String = OrderAdapter::class.java.simpleName
+    val TAG: String = CompletedOrdersAdapter::class.java.simpleName
     val ref = FirebaseDatabase.getInstance().reference
     private lateinit var binding: ItemOrderProductBinding
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): OrderAdapter.OrderViewHolder {
+    ): CompletedOrdersAdapter.CompletedOrdersHolder {
 
         binding = ItemOrderProductBinding.inflate(LayoutInflater.from(context), parent, false)
-        return OrderViewHolder(binding)
+        return CompletedOrdersHolder(binding)
 
 
     }
 
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     override fun onBindViewHolder(
-        holder: OrderAdapter.OrderViewHolder,
+        holder: CompletedOrdersAdapter.CompletedOrdersHolder,
         @SuppressLint("RecyclerView") position: Int
     ) {
         val order: Order = orderList[position]
@@ -57,10 +57,10 @@ class OrderAdapter(
     }
 
 
-    inner class OrderViewHolder(val binding: ItemOrderProductBinding) :
+    inner class CompletedOrdersHolder(val binding: ItemOrderProductBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun getProduct(order: Order, product_id: String, holder: OrderAdapter.OrderViewHolder) {
+        fun getProduct(order: Order, product_id: String, holder: CompletedOrdersAdapter.CompletedOrdersHolder) {
             var product: Product? = null
             val productListener = object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {

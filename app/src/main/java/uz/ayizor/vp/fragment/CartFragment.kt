@@ -14,13 +14,11 @@ import uz.ayizor.vp.utils.Logger
 import uz.ayizor.vp.adapter.CartAdapter
 import uz.ayizor.vp.databinding.FragmentCartBinding
 import uz.ayizor.vp.manager.UserPrefManager
-import uz.ayizor.vp.model.Order
 import uz.ayizor.vp.model.listmodel.OrdersList
 import com.google.firebase.database.*
 import com.google.firebase.database.annotations.NotNull
 import uz.ayizor.vp.model.Cart
 import uz.ayizor.vp.model.Location
-import uz.ayizor.vp.model.User
 
 class CartFragment : Fragment() {
 
@@ -52,7 +50,7 @@ class CartFragment : Fragment() {
 
         binding.btnCheckout.setOnClickListener {
             getLocations(UserPrefManager(mContext).loadUser()?.user_id)
-            if (UserPrefManager(mContext).loadUser()?.user_location?.isNotEmpty() == true) {
+            if (UserPrefManager(mContext).loadUserLocations()?.isNotEmpty() == true) {
                 val orders = OrdersList(productsList)
                 val action = CartFragmentDirections.actionNavCartToCheckoutActivity(orders)
                 findNavController().navigate(action)
@@ -79,8 +77,7 @@ class CartFragment : Fragment() {
         binding.rvCart.visibility = View.GONE
 
         val reference = FirebaseDatabase.getInstance().getReference("carts")
-        val query: Query =
-            reference.orderByChild("product_user_id")
+        val query: Query = reference.orderByChild("cart_user_id")
                 .equalTo(UserPrefManager(mContext).loadUser()?.user_id)
         query.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")

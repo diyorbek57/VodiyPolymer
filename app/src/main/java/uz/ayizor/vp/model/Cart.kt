@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Cart(
     val cart_id: String? = null,
-    val cart_product: Product? = null,
+    val cart_product_id: String? = null,
     val cart_user_id: String? = null,
     val cart_product_total_price: String? = null,
     val cart_product_total_quantity: String? = null,

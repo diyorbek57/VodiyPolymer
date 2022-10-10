@@ -3,62 +3,47 @@ package uz.ayizor.vp.adapter
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import uz.ayizor.vp.model.Order
 import com.bumptech.glide.Glide
 import com.google.firebase.database.*
 import com.mcdev.quantitizerlibrary.AnimationStyle
 import com.mcdev.quantitizerlibrary.HorizontalQuantitizer
 import com.mcdev.quantitizerlibrary.QuantitizerListener
 import uz.ayizor.vp.R
+import uz.ayizor.vp.databinding.ItemCartBinding
 import uz.ayizor.vp.model.Cart
+import uz.ayizor.vp.model.Product
 
-class CartAdapter(
+open class CartAdapter(
     val context: Context,
     var postsList: ArrayList<Cart>
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
 
     val TAG: String = CartAdapter::class.java.simpleName
     val ref = FirebaseDatabase.getInstance().reference
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    private lateinit var binding: ItemCartBinding
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
 
-        val view: View = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_cart, parent, false)
-        return CartViewHolder(view)
+        binding = ItemCartBinding.inflate(LayoutInflater.from(context), parent, false)
+        return CartViewHolder(binding)
 
 
     }
 
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     override fun onBindViewHolder(
-        holder: RecyclerView.ViewHolder,
+        holder: CartViewHolder,
         @SuppressLint("RecyclerView") position: Int
     ) {
 
         val product: Cart = postsList[position]
-        if (holder is CartViewHolder) {
-            // holder.color.setBackgroundColor(Color.parseColor("#" + product.product_color))
-
-            holder.delete.setOnClickListener {
-                if (product.cart_id != null) {
-                    showDialogDouble(position, product.cart_id)
-                }
-            }
-            Glide.with(context).load(product.cart_product?.product_image?.get(0)?.image_url)
-                .placeholder(R.color.dark_gray).into(holder.image)
-            holder.description.text = product.cart_product?.product_description
-            holder.title.text = product.cart_product?.product_name
-            holder.total_price.text = product.cart_product_total_price+" So'm"
-            setupQuantityStepper(holder.quantitizer, product)
-        }
+        holder.getProduct(product, product.cart_product_id.toString(), holder)
 
 
     }
@@ -81,7 +66,7 @@ class CartAdapter(
         })
     }
 
-    private fun setupQuantityStepper(quantityStepper: HorizontalQuantitizer, product: Cart) {
+    fun setupQuantityStepper(quantityStepper: HorizontalQuantitizer, product: Cart) {
         quantityStepper.textAnimationStyle = AnimationStyle.SWING
         quantityStepper.isReadOnly = false
         quantityStepper.setValueBackgroundColor(R.color.gray)
@@ -114,7 +99,8 @@ class CartAdapter(
         applesQuery.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (appleSnapshot in dataSnapshot.children) {
-                    appleSnapshot.ref.child("cart_product_total_quantity").setValue(value.toString())
+                    appleSnapshot.ref.child("cart_product_total_quantity")
+                        .setValue(value.toString())
                 }
             }
 
@@ -156,24 +142,54 @@ class CartAdapter(
     }
 
 
-    class CartViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var image: ImageView
-        var delete: ImageView
-        var mainRl: CardView
-        var title: TextView
-        var description: TextView
-        var total_price: TextView
-        var quantitizer: HorizontalQuantitizer
+    inner class CartViewHolder(val binding: ItemCartBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun getProduct(cart: Cart, product_id: String, holder: CartViewHolder) {
+            var product: Product? = null
+            val productListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    for (postSnapshot in dataSnapshot.children) {
+
+                        product = postSnapshot.getValue(Product::class.java)
+
+                    }
+                    if (product != null) {
+                        holder.bindCart(cart, product!!)
+                    }
 
 
-        init {
-            image = itemView.findViewById(R.id.iv_image)
-            delete = itemView.findViewById(R.id.iv_delete)
-            mainRl = itemView.findViewById(R.id.ll_main)
-            title = itemView.findViewById(R.id.tv_title)
-            description = itemView.findViewById(R.id.tv_description)
-            total_price = itemView.findViewById(R.id.tv_price)
-            quantitizer = itemView.findViewById(R.id.quantity_stepper)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Getting Post failed, log a message
+                    Log.w(TAG, "loadPost: onCancelled", databaseError.toException())
+                }
+            }
+            ref.child("products").orderByChild("product_id").equalTo(product_id)
+                .addValueEventListener(productListener)
+        }
+
+        @SuppressLint("SetTextI18n")
+        fun bindCart(cart: Cart, product: Product) {
+
+            with(product) {
+                with(cart) {
+                    binding.ivDelete.setOnClickListener {
+                        if (cart_id != null) {
+                            showDialogDouble(position, cart_id)
+                        }
+                    }
+                    Glide.with(context).load(product_image?.get(0)?.image_url)
+                        .placeholder(R.color.dark_gray).into(binding.ivImage)
+                    binding.tvDescription.text = product_description
+                    binding.tvTitle.text = product_name
+                    binding.tvPrice.text = "$cart_product_total_price So'm"
+                    setupQuantityStepper(binding.quantityStepper, cart)
+
+                }
+            }
+
         }
     }
 

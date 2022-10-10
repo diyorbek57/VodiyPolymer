@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Product(
+data class  Product(
     val product_id: String? = null,
     val product_category_id: String? = null,
     val product_name: String? = null,

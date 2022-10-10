@@ -3,6 +3,8 @@ package uz.ayizor.vp.manager
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import uz.ayizor.vp.model.Location
 import uz.ayizor.vp.model.User
 
 
@@ -28,8 +30,28 @@ class UserPrefManager(context: Context) {
     fun loadUser(): User? {
         val gson = Gson()
         val json: String? = sharedPreferences?.getString("user", "")
-        val user: User? = gson.fromJson(json, User::class.java)
-        return user
+        return gson.fromJson(json, User::class.java)
+    }
+
+    fun storeUserLocations(locations: ArrayList<Location>) {
+        val gson = Gson()
+        val json = gson.toJson(locations)
+        val prefsEditor = sharedPreferences!!.edit()
+        prefsEditor.putString("user_locations", json)
+        prefsEditor.apply()
+    }
+
+    fun loadUserLocations(): ArrayList<Location>? {
+        val gson = Gson()
+        val json: String? = sharedPreferences?.getString("user_locations", "")
+        val type = object : TypeToken<ArrayList<Location?>?>() {}.type
+        return try {
+            gson.fromJson(json, type) as ArrayList<Location>
+        } catch (e: NullPointerException) {
+            null
+        }
+
+
     }
 
     fun nukeUser() {

@@ -42,13 +42,16 @@ class CheckoutFragment : Fragment() {
     lateinit var location: Location
     lateinit var order: Order
     lateinit var mContext: Context
+    lateinit var user_id: String
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = ActivityCheckoutBinding.inflate(inflater, container, false)
         mContext = requireContext()
+        user_id= UserPrefManager(mContext).loadUser()?.user_id.toString()
         getOrderList()
+        getDefaultAddress()
         inits()
         return binding.root
     }
@@ -69,11 +72,27 @@ class CheckoutFragment : Fragment() {
 
 
         binding.btnOrder.setOnClickListener {
-            order = Order(Utils.getUUID(), UserPrefManager(mContext).loadUser()?.user_id,selectedLocation,productsList,true,1,Utils.getCurrentTime(),Utils.getCurrentTime())
-            database.child("orders").push().setValue(order).addOnSuccessListener {
-                for (i in 0 until productsList.size)
+
+            for (i in 0 until productsList.size){
+                order = Order(
+                    Utils.getUUID(),
+                    user_id,
+                    location.location_id,
+                    productsList[i].cart_product_id,
+                    true,
+                    1,
+                    productsList[0].cart_product_total_price,
+                    productsList[0].cart_product_total_quantity,
+                    Utils.getCurrentTime(),
+                    Utils.getCurrentTime()
+                )
+
+                database.child("orders").push().setValue(order).addOnSuccessListener {
                     productsList[i].cart_id?.let { it1 -> deleteProduct(it1) }
+                }
             }
+
+
             showDialog()
         }
 
@@ -86,7 +105,7 @@ class CheckoutFragment : Fragment() {
 
     }
 
-    private fun getAddresses() {
+    private fun getDefaultAddress() {
         val reference = FirebaseDatabase.getInstance().reference
         val query: Query =
             reference.child("users").orderByChild("user_id")
@@ -111,6 +130,7 @@ class CheckoutFragment : Fragment() {
                                                 locationSnapshot.getValue(Location::class.java)!!
 
                                         }
+                                        displayLocation(location)
                                     }
                                 }
 
@@ -133,6 +153,16 @@ class CheckoutFragment : Fragment() {
             }
         })
 
+    }
+
+    private fun displayLocation(location: Location) {
+        val detectedLocation = Utils.getCoordinateName(
+            mContext,
+            location.location_latitude!!.toDouble(),
+            location.location_longitude!!.toDouble()
+        )
+        binding.tvShippingAddressFullAddress.text = detectedLocation?.knownName
+        binding.tvShippingAddressTitle.text =location.location_name
     }
 
     @SuppressLint("SetTextI18n")

@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Location(
     val location_id: String? = null,
+    val location_user_id: String? = null,
     val location_name: String? = null,
     val location_latitude: String? = null,
     val location_longitude: String? = null,

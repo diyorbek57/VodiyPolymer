@@ -1,10 +1,12 @@
 package uz.ayizor.vp.activity
 
 import android.os.Bundle
-import uz.ayizor.vp.databinding.ActivityAuthBinding
 import com.google.firebase.FirebaseApp
 import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
+import com.google.firebase.database.FirebaseDatabase
+import uz.ayizor.vp.databinding.ActivityAuthBinding
+
 
 class AuthActivity : BaseActivity() {
 
@@ -13,11 +15,8 @@ class AuthActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        FirebaseApp.initializeApp(this)
-        val firebaseAppCheck = FirebaseAppCheck.getInstance()
-        firebaseAppCheck.installAppCheckProviderFactory(
-            SafetyNetAppCheckProviderFactory.getInstance()
-        )
+
+
 
 
     }

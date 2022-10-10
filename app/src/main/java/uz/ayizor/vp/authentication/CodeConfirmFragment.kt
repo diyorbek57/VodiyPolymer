@@ -179,33 +179,35 @@ class CodeConfirmFragment : Fragment() {
             if (!task.isSuccessful) {
                 Logger.d("FCM", "Fetching FCM registration token failed")
                 return@OnCompleteListener
+            }else{
+                // Get new FCM registration token
+                // Save it in locally to use later
+                user_device_token = task.result
+                Logger.d("FCM", user_device_token)
+                val user_device_id: String = Utils.getDeviceID(requireContext())
+                val currentTime = Utils.getCurrentTime()
+                val uuid: String = UUID.randomUUID().toString().replace("-", "");
+                val user = User(
+                    uuid,
+                    args.firstName,
+                    args.lastName,
+                    args.companyName,
+                    args.number,
+                    user_device_id,
+                    user_device_type,
+                    user_device_token,
+                    currentTime,
+                    currentTime
+                )
+                reference.child("users").push().setValue(user)
+                UserPrefManager(requireContext()).storeUser(user)
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                startActivity(intent)
+                activity?.finish()
             }
-            // Get new FCM registration token
-            // Save it in locally to use later
-            user_device_token = task.result
-            Logger.d("FCM", user_device_token)
+
         })
-        val user_device_id: String = Utils.getDeviceID(requireContext())
-        val currentTime = Utils.getCurrentTime()
-        val uuid: String = UUID.randomUUID().toString().replace("-", "");
-        val user = User(
-            uuid,
-            args.firstName,
-            args.lastName,
-            args.companyName,
-            args.number,
-            user_device_id,
-            user_device_token,
-            null,
-            null,
-            currentTime,
-            currentTime
-        )
-        reference.child("users").push().setValue(user)
-        UserPrefManager(requireContext()).storeUser(user)
-        val intent = Intent(requireContext(), MainActivity::class.java)
-        startActivity(intent)
-        activity?.finish()
+
 
     }
 
