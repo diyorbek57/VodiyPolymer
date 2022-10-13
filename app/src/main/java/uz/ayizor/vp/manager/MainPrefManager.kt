@@ -66,4 +66,39 @@ class MainPrefManager(context: Context) {
 
 
     }
+
+    fun storeGeneralNotification(status: Boolean?) {
+        val prefsEditor = sharedPreferences!!.edit()
+        if (status != null) {
+            prefsEditor.putBoolean("general_notification", status)
+        }
+        prefsEditor.apply()
+    }
+
+    fun loadGeneralNotification(): Boolean {
+        return sharedPreferences!!.getBoolean("general_notification", false)
+    }
+
+    fun storeSound(status: Boolean?) {
+        val prefsEditor = sharedPreferences!!.edit()
+        if (status != null) {
+            prefsEditor.putBoolean("sound", status)
+        }
+        prefsEditor.apply()
+    }
+
+    fun loadSound(): Boolean {
+        return sharedPreferences!!.getBoolean("sound", false)
+    }
+    fun storeVibrate(status: Boolean?) {
+        val prefsEditor = sharedPreferences!!.edit()
+        if (status != null) {
+            prefsEditor.putBoolean("vibrate", status)
+        }
+        prefsEditor.apply()
+    }
+
+    fun loadVibrate(): Boolean {
+        return sharedPreferences!!.getBoolean("vibrate", false)
+    }
 }

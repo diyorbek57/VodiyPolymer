@@ -13,7 +13,21 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
-//rating bar style
+    //pdf reader
+
+    <style name="Theme.PdfView.SelectedTheme" parent="@style/Theme.PdfView.Light">
+        <item name="pdfView_actionBarTint">@color/white</item>
+        <item name="pdfView_backIcon">@drawable/ic_arrow_left_line</item>
+        <item name="pdfView_titleTextStyle">@style/Pdfviewer.Textview.Style</item>
+        ...
+    </style>
+
+    <style name="Pdfviewer.Textview.Style" parent="@android:style/Widget.Material.TextView">
+        <item name="android:fontFamily">@font/generalsans_semibold</item>
+        <item name="android:textColor">@color/very_dark_gray_mostly_black</item>
+    </style>
+    //rating bar style
+
     <style name="reviewRatingBar" parent="@android:style/Widget.RatingBar">
         <item name="android:progressDrawable">@drawable/rating_bar_full</item>
         <item name="android:minHeight">24dip</item>
@@ -21,6 +35,7 @@
     </style>
 
     //Bottomsheet theme
+
     <style name="DialogAnimaton">
         <item name="android:windowEnterAnimation">@anim/slide_in_bottomsheet</item>
         <item name="android:windowExitAnimation">@anim/slide_out_bottomsheet</item>
@@ -44,10 +59,12 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
     //tab layout font style
+
     <style name="tab_layout_text_style" parent="@android:style/TextAppearance.Widget.TabWidget">
         <item name="android:fontFamily">@font/generalsans_medium</item>
     </style>
     //Circler image view styles
+
     <style name="circler_imageView" parent="">
         <item name="cornerSize">50%</item>
     </style>
@@ -59,6 +76,7 @@
     <style name="rounded_border_imageView_10">
         <item name="cornerSize">10dp</item>
     </style>
+
     <style name="rounded_border_imageView_15">
         <item name="cornerSize">15dp</item>
     </style>
@@ -82,7 +100,9 @@
         <item name="cornerSizeBottomRight">20dp</item>
     </style>
     //badge style
+
     <style name="MenuDrawer" />
+
     <style name="MenuDrawer.Widget" />
 
     <style name="MenuDrawer.Widget.MenuBadgeCount">

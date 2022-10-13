@@ -71,14 +71,18 @@ dependencies {
     //noinspection GradleDependency
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
     //glide
-    implementation 'com.github.bumptech.glide:glide:4.13.2'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
     //gson
     implementation 'com.google.code.gson:gson:2.9.1'
     //pinview
     implementation 'io.github.chaosleung:pinview:1.4.4'
     //banner
     implementation 'io.github.youth5201314:banner:2.2.2'
+    //pdf viewer
+    implementation 'com.github.afreakyelf:Pdf-Viewer:v1.0.7'
+    //ios swich
+    implementation 'com.github.luongvo:iOS-SwitchView:1.0.2'
     //sticky header
     implementation 'com.github.shuhart:stickyheader:1.1.0'
     //dot indicator
