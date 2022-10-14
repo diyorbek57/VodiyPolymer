@@ -8,10 +8,9 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +22,7 @@ import uz.ayizor.vp.R
 import uz.ayizor.vp.adapter.CheckoutAdapter
 import uz.ayizor.vp.databinding.ActivityCheckoutBinding
 import uz.ayizor.vp.databinding.ItemSuccessfulDialogBinding
+import uz.ayizor.vp.fragment.orders.OrderShippingAddressFragment
 import uz.ayizor.vp.manager.UserPrefManager
 import uz.ayizor.vp.model.Cart
 import uz.ayizor.vp.model.Location
@@ -31,29 +31,79 @@ import uz.ayizor.vp.utils.Logger
 import uz.ayizor.vp.utils.Utils
 
 
-class CheckoutFragment : Fragment() {
+class CheckoutFragment : Fragment(R.layout.activity_checkout) {
 
     lateinit var binding: ActivityCheckoutBinding
     val TAG: String = CheckoutFragment::class.java.simpleName
     private val args: CheckoutFragmentArgs by navArgs()
     private lateinit var database: DatabaseReference
     var productsList: ArrayList<Cart> = ArrayList()
-    lateinit var selectedLocation: Location
+    lateinit var selectedLocationId: String
     lateinit var location: Location
     lateinit var order: Order
     lateinit var mContext: Context
     lateinit var user_id: String
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = ActivityCheckoutBinding.inflate(inflater, container, false)
+    val reference = FirebaseDatabase.getInstance().reference
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = ActivityCheckoutBinding.bind(view)
         mContext = requireContext()
-        user_id= UserPrefManager(mContext).loadUser()?.user_id.toString()
+        user_id = UserPrefManager(mContext).loadUser()?.user_id.toString()
+        setFragmentResultListener(OrderShippingAddressFragment.REQUEST_KEY){ key, bundle ->
+            selectedLocationId = bundle.getString(key).toString()
+            getSelectedLocation(selectedLocationId)
+        }
         getOrderList()
         getDefaultAddress()
         inits()
-        return binding.root
+    }
+
+    private fun getSelectedLocation(id: String) {
+        val query: Query =
+            reference.child("users_locations").orderByChild("location_id")
+                .equalTo(id)
+        query.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+
+                    for (userSnapshot in snapshot.children) {
+                        userSnapshot.ref.child("user_location").orderByChild("location_isDefault")
+                            .equalTo(true)
+                            .addValueEventListener(object : ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    if (snapshot.exists()) {
+                                        for (locationSnapshot in snapshot.children) {
+                                            Logger.e(
+                                                TAG,
+                                                "locationSnapshot: " + locationSnapshot.toString()
+                                            )
+                                            location =
+                                                locationSnapshot.getValue(Location::class.java)!!
+
+                                        }
+                                        displayLocation(location)
+                                    }
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+                                    TODO("Not yet implemented")
+                                }
+
+                            })
+
+
+                    }
+
+                } else {
+                    Log.e(TAG, "NO DATA")
+                }
+            }
+
+            override fun onCancelled(@NotNull error: DatabaseError) {
+                Log.e(TAG, "NO DATA")
+            }
+        })
     }
 
 
@@ -63,6 +113,8 @@ class CheckoutFragment : Fragment() {
     }
 
     private fun inits() {
+
+
         database = Firebase.database.reference
         binding.rvCart.layoutManager = LinearLayoutManager(
             requireContext(),
@@ -73,7 +125,7 @@ class CheckoutFragment : Fragment() {
 
         binding.btnOrder.setOnClickListener {
 
-            for (i in 0 until productsList.size){
+            for (i in 0 until productsList.size) {
                 order = Order(
                     Utils.getUUID(),
                     user_id,
@@ -97,6 +149,7 @@ class CheckoutFragment : Fragment() {
         }
 
         binding.rlChangeLocations.setOnClickListener {
+
             val action =
                 CheckoutFragmentDirections.actionCheckoutActivityToOrderShippingAddressFragment()
             findNavController().navigate(action)
@@ -106,10 +159,9 @@ class CheckoutFragment : Fragment() {
     }
 
     private fun getDefaultAddress() {
-        val reference = FirebaseDatabase.getInstance().reference
         val query: Query =
             reference.child("users").orderByChild("user_id")
-                .equalTo(UserPrefManager(requireContext()).loadUser()?.user_id)
+                .equalTo(user_id)
         query.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
@@ -162,7 +214,7 @@ class CheckoutFragment : Fragment() {
             location.location_longitude!!.toDouble()
         )
         binding.tvShippingAddressFullAddress.text = detectedLocation?.knownName
-        binding.tvShippingAddressTitle.text =location.location_name
+        binding.tvShippingAddressTitle.text = location.location_name
     }
 
     @SuppressLint("SetTextI18n")

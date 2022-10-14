@@ -270,4 +270,5 @@ class DetailsActivity : AppCompatActivity() {
         }
         return ssb
     }
+
 }

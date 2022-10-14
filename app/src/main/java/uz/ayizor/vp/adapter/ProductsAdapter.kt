@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import uz.ayizor.vp.R
 import uz.ayizor.vp.databinding.ItemProductBinding
 import uz.ayizor.vp.model.Product
@@ -55,7 +56,8 @@ class ProductsAdapter(
                 //image
 
 
-                Glide.with(context).load(product_image?.get(0)?.image_url).into(binding.ivImage)
+                Glide.with(context).load(product_image?.get(0)?.image_url).transition(
+                    DrawableTransitionOptions.withCrossFade()).into(binding.ivImage)
 
                 //rating
                 binding.tvRating.text = product_rating.toString()

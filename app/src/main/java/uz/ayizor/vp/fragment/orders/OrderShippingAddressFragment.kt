@@ -9,7 +9,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.database.*
@@ -29,7 +32,7 @@ import uz.ayizor.vp.model.Location
 import uz.ayizor.vp.utils.Logger
 import uz.ayizor.vp.utils.Utils
 
-class OrderShippingAddressFragment : Fragment(),
+class OrderShippingAddressFragment : Fragment(R.layout.fragment_order_shipping_address),
     ChooseShippingAddressAdapter.OnRadioButtonClickListener {
     lateinit var binding: FragmentOrderShippingAddressBinding
     lateinit var bottomSheetBinding: ItemAddLocationBottomsheetBinding
@@ -40,17 +43,19 @@ class OrderShippingAddressFragment : Fragment(),
     lateinit var mContext: Context
     lateinit var reference: DatabaseReference
     lateinit var user_id: String
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentOrderShippingAddressBinding.inflate(inflater, container, false)
+
+    companion object {
+        val REQUEST_KEY = "selected_location"
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentOrderShippingAddressBinding.bind(view)
         mContext = requireContext()
         user_id = UserPrefManager(mContext).loadUser()?.user_id.toString()
         inits()
-
-        return binding.root
     }
+
 
 
     private fun inits() {
@@ -271,6 +276,8 @@ class OrderShippingAddressFragment : Fragment(),
 
 
     override fun onRadioButtonClickListener(id: String) {
-        toast(id)
+        setFragmentResult(REQUEST_KEY, bundleOf("data" to id))
+        // Step 4. Go back to Fragment A
+        findNavController().navigateUp()
     }
 }
