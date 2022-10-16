@@ -7,9 +7,7 @@
     android:layout_marginHorizontal="5dp"
     android:layout_marginVertical="5dp"
     app:cardCornerRadius="15dp"
-    app:cardElevation="0dp"
-
-    >
+    app:cardElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,6 +18,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:layout_gravity="center_vertical"
             app:cardBackgroundColor="@color/very_light_gray"
             app:cardCornerRadius="15dp"
             app:cardElevation="0dp">
@@ -33,12 +32,13 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
             <RelativeLayout
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -46,8 +46,11 @@
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
                     android:fontFamily="@font/generalsans_semibold"
-                    android:text="Title"
+                    android:maxEms="10"
+                    android:maxLines="1"
+                    android:text="@string/dummy_text"
                     android:textColor="@color/very_dark_gray_mostly_black"
                     android:textSize="18sp" />
 
@@ -61,28 +64,32 @@
 
 
             <TextView
-
                 android:id="@+id/tv_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/generalsans_semibold"
-                android:text="@string/description"
+                android:layout_marginVertical="2dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/generalsans_medium"
+                android:maxLines="2"
+                android:text="@string/dummy_text"
                 android:textColor="@color/very_dark_gray_mostly_black"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <TextView
+
                     android:id="@+id/tv_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/generalsans_semibold"
-                    android:text="$445.00"
+                    android:maxLength="16"
+                    android:text="@string/dummy_text"
                     android:textColor="@color/very_dark_gray_mostly_black"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
 
                 <com.mcdev.quantitizerlibrary.HorizontalQuantitizer
                     android:id="@+id/quantity_stepper"
@@ -90,6 +97,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true" />
             </RelativeLayout>
+
+
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

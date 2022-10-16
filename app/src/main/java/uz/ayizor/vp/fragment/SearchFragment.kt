@@ -51,7 +51,7 @@ class SearchFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
 
     private fun inits() {
         binding.flSearch.transitionName = "search_field"
-        if (MainPrefManager(mContext).loadSearchHistory()?.isNullOrEmpty() != true) {
+        if (MainPrefManager(mContext).loadSearchHistory()?.isNotEmpty() == true) {
             historyList = MainPrefManager(mContext).loadSearchHistory()!!
             refreshRecentAdapter(historyList)
         }

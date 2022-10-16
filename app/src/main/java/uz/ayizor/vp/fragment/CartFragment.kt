@@ -3,22 +3,21 @@ package uz.ayizor.vp.fragment
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import uz.ayizor.vp.utils.Logger
+import com.google.firebase.database.*
+import com.google.firebase.database.annotations.NotNull
 import uz.ayizor.vp.adapter.CartAdapter
 import uz.ayizor.vp.databinding.FragmentCartBinding
 import uz.ayizor.vp.manager.UserPrefManager
-import uz.ayizor.vp.model.listmodel.OrdersList
-import com.google.firebase.database.*
-import com.google.firebase.database.annotations.NotNull
 import uz.ayizor.vp.model.Cart
 import uz.ayizor.vp.model.Location
+import uz.ayizor.vp.model.listmodel.OrdersList
+import uz.ayizor.vp.utils.Logger
 
 class CartFragment : Fragment() {
 
@@ -28,14 +27,16 @@ class CartFragment : Fragment() {
     val productsList: ArrayList<Cart> = ArrayList()
     var totalPrice = 0
     lateinit var address: Location
-    val addressList: ArrayList<Location> = ArrayList()
     lateinit var mContext: Context
+    lateinit var user_id: String
+    val reference = FirebaseDatabase.getInstance().reference
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentCartBinding.inflate(inflater, container, false)
-        mContext= requireContext()
+        mContext = requireContext()
+        user_id = UserPrefManager(mContext).loadUser()?.user_id.toString()
         inits()
         return binding.root
     }
@@ -49,16 +50,8 @@ class CartFragment : Fragment() {
         )
 
         binding.btnCheckout.setOnClickListener {
-            getLocations(UserPrefManager(mContext).loadUser()?.user_id)
-            if (UserPrefManager(mContext).loadUserLocations()?.isNotEmpty() == true) {
-                val orders = OrdersList(productsList)
-                val action = CartFragmentDirections.actionNavCartToCheckoutActivity(orders)
-                findNavController().navigate(action)
+            getUserLocations(user_id)
 
-            } else {
-                val action = CartFragmentDirections.actionNavCartToShippingAddressFragment()
-                findNavController().navigate(action)
-            }
         }
         getProducts()
 
@@ -76,9 +69,9 @@ class CartFragment : Fragment() {
         binding.progressBar.visibility = View.VISIBLE
         binding.rvCart.visibility = View.GONE
 
-        val reference = FirebaseDatabase.getInstance().getReference("carts")
-        val query: Query = reference.orderByChild("cart_user_id")
-                .equalTo(UserPrefManager(mContext).loadUser()?.user_id)
+
+        val query: Query = reference.child("carts").orderByChild("cart_user_id")
+            .equalTo(user_id)
         query.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
@@ -91,18 +84,18 @@ class CartFragment : Fragment() {
                             productsList.add(product)
                         }
                     }
-                    if (productsList.isNotEmpty()){
+                    if (productsList.isNotEmpty()) {
                         refreshCartAdapter(productsList)
                         binding.tvTotalPrice.text = "$totalPrice So'm"
                         getTotalPrice(productsList)
                         binding.rlAddToCart.visibility = View.VISIBLE
-                    }else{
+                    } else {
                         binding.progressBar.visibility = View.GONE
                         binding.emptyState.llEmpty.visibility = View.VISIBLE
                     }
 
 
-                }else{
+                } else {
                     binding.progressBar.visibility = View.GONE
                     binding.emptyState.llEmpty.visibility = View.VISIBLE
                 }
@@ -113,54 +106,47 @@ class CartFragment : Fragment() {
 
 
     }
-    fun getLocations(userId: String?) {
-        val reference = FirebaseDatabase.getInstance().reference
-        val query: Query =
-            reference.child("users").orderByChild("user_phone_number").equalTo(userId)
-        query.addValueEventListener(object : ValueEventListener {
-            @SuppressLint("SetTextI18n")
-            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+
+    private fun getUserLocations(user_id: String) {
+        var defaultLocation: Location? = null
+        val locationsQuery: Query =
+            reference.child("users_locations").orderByChild("location_user_id")
+                .equalTo(user_id)
+        locationsQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
 
-
                     for (userSnapshot in snapshot.children) {
-                        userSnapshot.ref.child("user_location")
-                            .addValueEventListener(object : ValueEventListener {
-                                override fun onDataChange(snapshot: DataSnapshot) {
-                                    if (snapshot.exists()) {
+                        Logger.e(TAG, "getDefaultAddress : 1 :" + snapshot.exists().toString())
 
-
-                                        for (locationSnapshot in snapshot.children) {
-                                            Logger.e(TAG, "locationSnapshot: " + locationSnapshot.toString())
-                                            address = locationSnapshot.getValue(Location::class.java)!!
-                                            address.location_name?.let { Log.e(TAG, it) }
-                                            addressList.add(address)
-                                        }
-                                    }
-
-
-
-                                }
-
-                                override fun onCancelled(error: DatabaseError) {
-                                    TODO("Not yet implemented")
-                                }
-
-                            })
+                        val location = userSnapshot.getValue(Location::class.java)
+                        if (location?.location_isDefault == true && location.location_user_id == user_id) {
+                            defaultLocation = location
+                        }
 
 
                     }
+                    val orders = OrdersList(productsList)
+                    val action = CartFragmentDirections.actionNavCartToCheckoutActivity(
+                        orders,
+                        defaultLocation!!
+                    )
+                    findNavController().navigate(action)
+
 
                 } else {
-                    Log.e(TAG, "NO DATA")
+                    val action = CartFragmentDirections.actionNavCartToShippingAddressFragment()
+                    findNavController().navigate(action)
                 }
+
+
             }
 
-            override fun onCancelled(@NotNull error: DatabaseError) {
-                Log.e(TAG, "NO DATA")
+            override fun onCancelled(error: DatabaseError) {
+                Logger.e(TAG, "getUserLocations: " + error.message)
             }
+
         })
-
     }
 
 

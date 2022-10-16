@@ -20,6 +20,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:layout_gravity="center_vertical"
             app:cardBackgroundColor="@color/very_light_gray"
             app:cardCornerRadius="15dp"
             app:cardElevation="0dp">
@@ -33,7 +34,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="10dp"
             android:gravity="center_vertical"
             android:orientation="vertical">
@@ -46,7 +48,10 @@
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
                     android:fontFamily="@font/generalsans_semibold"
+                    android:maxEms="10"
+                    android:maxLines="1"
                     android:text="Title"
                     android:textColor="@color/very_dark_gray_mostly_black"
                     android:textSize="18sp" />
@@ -58,7 +63,10 @@
                 android:id="@+id/tv_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="2dp"
+                android:ellipsize="end"
                 android:fontFamily="@font/generalsans_medium"
+                android:maxLines="2"
                 android:text="@string/description"
                 android:textColor="@color/very_dark_gray_mostly_black"
                 android:textSize="16sp" />
@@ -74,8 +82,9 @@
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/generalsans_semibold"
                     android:text="$445.00"
+                    android:maxLength="16"
                     android:textColor="@color/very_dark_gray_mostly_black"
-                    android:textSize="18sp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tv_quantity"

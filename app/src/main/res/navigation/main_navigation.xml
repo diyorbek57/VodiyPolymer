@@ -25,9 +25,17 @@
         <action
             app:popUpToInclusive="true"
             app:popUpTo="@+id/checkoutActivity"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popExitAnim="@anim/exit_to_right"
+            app:popEnterAnim="@anim/enter_from_left"
             android:id="@+id/action_nav_cart_to_checkoutActivity"
             app:destination="@id/checkoutActivity" />
         <action
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popExitAnim="@anim/exit_to_right"
+            app:popEnterAnim="@anim/enter_from_left"
             android:id="@+id/action_nav_cart_to_shippingAddressFragment"
             app:destination="@id/orderShippingAddressFragment" />
     </fragment>
@@ -78,6 +86,10 @@
         android:label=""
         tools:layout="@layout/fragment_orders" >
         <action
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popExitAnim="@anim/exit_to_right"
+            app:popEnterAnim="@anim/enter_from_left"
             android:id="@+id/action_nav_orders_to_trackOrderFragment"
             app:destination="@id/trackOrderFragment" />
     </fragment>
@@ -98,8 +110,15 @@
             app:popUpTo="@+id/nav_cart"
             app:popUpToInclusive="true" />
         <action
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popExitAnim="@anim/exit_to_right"
+            app:popEnterAnim="@anim/enter_from_left"
             android:id="@+id/action_checkoutActivity_to_orderShippingAddressFragment"
             app:destination="@id/orderShippingAddressFragment" />
+        <argument
+            android:name="DefaultLocation"
+            app:argType="uz.ayizor.vp.model.Location" />
     </fragment>
     <fragment
         android:id="@+id/trackOrderFragment"

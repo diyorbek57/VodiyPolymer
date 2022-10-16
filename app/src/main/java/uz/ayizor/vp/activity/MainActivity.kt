@@ -95,7 +95,6 @@ class MainActivity : BaseActivity() {
 
                     }
                     if (!user.user_id.isNullOrEmpty()) {
-                        getUserLocations(user.user_id.toString())
                         UserPrefManager(this@MainActivity).storeUser(user)
                     }
 
@@ -111,43 +110,6 @@ class MainActivity : BaseActivity() {
 
 
     }
-
-    fun getUserLocations(user_id: String) {
-        val locationsQuery: Query =
-            reference.child("users_locations").orderByChild("location_user_id")
-                .equalTo(user_id)
-        locationsQuery.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-
-
-                    for (locationSnapshot in snapshot.children) {
-                        Logger.e(
-                            TAG,
-                            "locationSnapshot: " + locationSnapshot.toString()
-                        )
-                        address =
-                            locationSnapshot.getValue(Location::class.java)!!
-
-
-                        address.location_name?.let { Log.e(TAG, it) }
-                        addressList.add(address)
-                    }
-
-                    UserPrefManager(this@MainActivity).storeUserLocations(addressList)
-                }
-
-
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-        })
-    }
-
 
     private fun setupNavigation() {
         val navHostFragment =

@@ -171,7 +171,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
                     }
 
                     refreshProductsAdapter(productsList)
-                    showViewWithAnimations(binding.nestedScrollView)
+                    showViewWithAnimations(binding.rvProducts)
 
 
                 } else {

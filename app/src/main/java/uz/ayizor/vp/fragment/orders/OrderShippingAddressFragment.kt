@@ -276,8 +276,7 @@ class OrderShippingAddressFragment : Fragment(R.layout.fragment_order_shipping_a
 
 
     override fun onRadioButtonClickListener(id: String) {
-        setFragmentResult(REQUEST_KEY, bundleOf("data" to id))
-        // Step 4. Go back to Fragment A
+        findNavController().previousBackStackEntry?.savedStateHandle?.set(REQUEST_KEY, id)
         findNavController().navigateUp()
     }
 }
