@@ -2,10 +2,9 @@ package uz.ayizor.vp.fragment
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import uz.ayizor.vp.R
@@ -16,18 +15,20 @@ import uz.ayizor.vp.model.Language
 import uz.ayizor.vp.utils.Utils
 
 
-class LanguageFragment : Fragment(), LanguageAdapter.OnItemClickListener {
+class LanguageFragment : Fragment(R.layout.fragment_language), LanguageAdapter.OnItemClickListener {
 
     lateinit var binding: FragmentLanguageBinding
-    val TAG: String = HomeFragment::class.java.simpleName
+    val TAG: String = LanguageFragment::class.java.simpleName
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentLanguageBinding.inflate(inflater, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentLanguageBinding.bind(view)
+    }
+
+    override fun onResume() {
+        super.onResume()
         inits()
-        return binding.root
     }
 
     private fun inits() {
@@ -36,6 +37,9 @@ class LanguageFragment : Fragment(), LanguageAdapter.OnItemClickListener {
             LinearLayoutManager.VERTICAL,
             false
         )
+        binding.ivBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
         createLanguages()
     }
 
@@ -52,9 +56,9 @@ class LanguageFragment : Fragment(), LanguageAdapter.OnItemClickListener {
 
     private fun createLanguages() {
         val languages: ArrayList<Language> = ArrayList()
-        languages.add(Language("English", "en",false))
-        languages.add(Language("O'zbek", "uz",false))
-        languages.add(Language("Русский", "ru",false))
+        languages.add(Language("English", "en", false))
+        languages.add(Language("O'zbek", "uz", false))
+        languages.add(Language("Русский", "ru", false))
         refreshCategoryAdapter(languages)
     }
 

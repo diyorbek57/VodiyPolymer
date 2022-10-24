@@ -30,22 +30,25 @@ import uz.ayizor.vp.utils.Logger
 import uz.ayizor.vp.utils.Utils
 
 
-class ShippingAddressFragment : Fragment(), EditShippingAddressAdapter.OnItemClickListener {
+class ShippingAddressFragment : Fragment(R.layout.fragment_shipping_address), EditShippingAddressAdapter.OnItemClickListener {
     lateinit var binding: FragmentShippingAddressBinding
     val TAG: String = OrderShippingAddressFragment::class.java.simpleName
     val addressList: ArrayList<Location> = ArrayList()
     lateinit var address: Location
     lateinit var mContext: Context
     lateinit var reference: DatabaseReference
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentShippingAddressBinding.inflate(inflater, container, false)
-        mContext = requireContext()
-        inits()
+    lateinit var user_id: String
 
-        return binding.root
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentShippingAddressBinding.bind(view)
+        mContext = requireContext()
+    }
+    override fun onResume() {
+        super.onResume()
+        user_id = UserPrefManager(mContext).loadUser()?.user_id.toString()
+        inits()
     }
 
     private fun inits() {
@@ -71,10 +74,7 @@ class ShippingAddressFragment : Fragment(), EditShippingAddressAdapter.OnItemCli
 
     private fun openPlacePicker() {
         val intent = PlacePicker.IntentBuilder()
-            .setLatLong(
-                40.713852,
-                72.054559
-            )  // Initial Latitude and Longitude the Map will load into
+            .setLatLong(40.713852, 72.054559)  // Initial Latitude and Longitude the Map will load into
             .showLatLong(true)  // Show Coordinates in the Activity
             .setMapZoom(17.0f)  // Map Zoom Level. Default: 14.0
             .setAddressRequired(true) // Set If return only Coordinates if cannot fetch Address for the coordinates. Default: True
@@ -159,38 +159,20 @@ class ShippingAddressFragment : Fragment(), EditShippingAddressAdapter.OnItemCli
 
 
     private fun getAddresses() {
-
-        val query: Query = reference.orderByChild("user_id")
-            .equalTo(UserPrefManager(mContext).loadUser()?.user_id)
+        val query: Query = reference.orderByChild("location_user_id")
+            .equalTo(user_id)
         query.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    for (userSnapshot in snapshot.children) {
-                        userSnapshot.ref.child("user_location").addValueEventListener(object : ValueEventListener {
-                                override fun onDataChange(snapshot: DataSnapshot) {
-                                    addressList.clear()
-                                    for (locationSnapshot in snapshot.children) {
-                                        Logger.e(TAG,
-                                            "locationSnapshot: " + locationSnapshot.toString()
-                                        )
-                                        address = locationSnapshot.getValue(Location::class.java)!!
-
-
-                                        address.location_name?.let { Log.e(TAG, it) }
-                                        addressList.add(address)
-                                    }
-                                    refreshAddressAdapter(addressList)
-                                }
-
-                                override fun onCancelled(error: DatabaseError) {
-                                    TODO("Not yet implemented")
-                                }
-
-                            })
-
-
+                    addressList.clear()
+                    for (locationSnapshot in snapshot.children) {
+                        address = locationSnapshot.getValue(Location::class.java)!!
+                        address.location_name?.let { Log.e(TAG, it) }
+                        addressList.add(address)
                     }
+
+                    refreshAddressAdapter(addressList)
 
                 } else {
                     Log.e(TAG, "NO DATA")

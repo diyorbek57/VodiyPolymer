@@ -54,6 +54,13 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
         inits()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        getDiscountProducts()
+        getProducts()
+        getCategory()
+    }
 
     @SuppressLint("SimpleDateFormat")
     private fun inits() {
@@ -85,21 +92,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
         }
 
         binding.ivFavorites.setOnClickListener {
-//            for (i in 0 until 5) {
-//                database.getReference("categories").push().setValue(
-//                    Category(
-//                        Utils.getUUID(),
-//                        "test $i",
-//                        Utils.getCurrentTime(),
-//                        Utils.getCurrentTime()
-//                    )
-//                )
-//            }
-
         }
-        getDiscountProducts()
-        getProducts()
-        getCategory()
+
     }
 
     private fun setupBanner(product: ArrayList<Product>) {

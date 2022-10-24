@@ -6,12 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -22,7 +18,6 @@ import com.sucho.placepicker.Constants
 import com.sucho.placepicker.Constants.GOOGLE_API_KEY
 import com.sucho.placepicker.MapType
 import com.sucho.placepicker.PlacePicker
-import uz.ayizor.afeme.utils.Extensions.toast
 import uz.ayizor.vp.R
 import uz.ayizor.vp.adapter.ChooseShippingAddressAdapter
 import uz.ayizor.vp.databinding.FragmentOrderShippingAddressBinding
@@ -52,10 +47,15 @@ class OrderShippingAddressFragment : Fragment(R.layout.fragment_order_shipping_a
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentOrderShippingAddressBinding.bind(view)
         mContext = requireContext()
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         user_id = UserPrefManager(mContext).loadUser()?.user_id.toString()
         inits()
     }
-
 
 
     private fun inits() {
@@ -211,7 +211,7 @@ class OrderShippingAddressFragment : Fragment(R.layout.fragment_order_shipping_a
                     } else {
                         createAddress(getCreatedAddress())
                     }
-                }else{
+                } else {
                     createAddress(getCreatedAddress())
                 }
             }
@@ -231,7 +231,7 @@ class OrderShippingAddressFragment : Fragment(R.layout.fragment_order_shipping_a
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     for (userSnapshot in snapshot.children) {
-                       val location = userSnapshot.getValue(Location::class.java)
+                        val location = userSnapshot.getValue(Location::class.java)
                         if (location?.location_isDefault == true && location.location_user_id == user_id && location.location_id == locationId) {
                             userSnapshot.ref.child("location_isDefault").setValue(false)
                                 .addOnSuccessListener {

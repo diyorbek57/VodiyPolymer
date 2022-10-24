@@ -20,19 +20,19 @@ import uz.ayizor.vp.databinding.ItemDoubleBottomsheetBinding
 import uz.ayizor.vp.manager.UserPrefManager
 
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : Fragment(R.layout.fragment_profile) {
     lateinit var binding: FragmentProfileBinding
-    val TAG: String = CartFragment::class.java.simpleName
+    val TAG: String = ProfileFragment::class.java.simpleName
     lateinit var mContext: Context
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentProfileBinding.inflate(inflater, container, false)
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentProfileBinding.bind(view)
         mContext = requireContext()
         inits()
-        return binding.root
     }
+
 
     private fun inits() {
         displayUserDatas()
