@@ -78,7 +78,33 @@ class OrderShippingAddressFragment : Fragment(R.layout.fragment_order_shipping_a
 //        binding.rvCart.visibility = View.VISIBLE
 
     }
+    private fun getAddresses() {
+        val query: Query = reference.orderByChild("location_user_id")
+            .equalTo(user_id)
+        query.addValueEventListener(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    addressList.clear()
+                    for (locationSnapshot in snapshot.children) {
+                        address = locationSnapshot.getValue(Location::class.java)!!
+                        address.location_name?.let { Log.e(TAG, it) }
+                        addressList.add(address)
+                    }
 
+                    refreshAddressAdapter(addressList)
+
+                } else {
+                    Log.e(TAG, "NO DATA")
+                }
+            }
+
+            override fun onCancelled(@NotNull error: DatabaseError) {
+                Log.e(TAG, "NO DATA")
+            }
+        })
+
+    }
     private fun openPlacePicker() {
         val intent = PlacePicker.IntentBuilder()
             .setLatLong(
@@ -151,35 +177,6 @@ class OrderShippingAddressFragment : Fragment(R.layout.fragment_order_shipping_a
 
         sheetDialog.show();
         sheetDialog.window?.attributes?.windowAnimations = R.style.DialogAnimaton;
-    }
-
-
-    private fun getAddresses() {
-        val query: Query = reference.orderByChild("location_user_id")
-            .equalTo(user_id)
-        query.addValueEventListener(object : ValueEventListener {
-            @SuppressLint("SetTextI18n")
-            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    addressList.clear()
-                    for (locationSnapshot in snapshot.children) {
-                        address = locationSnapshot.getValue(Location::class.java)!!
-                        address.location_name?.let { Log.e(TAG, it) }
-                        addressList.add(address)
-                    }
-
-                    refreshAddressAdapter(addressList)
-
-                } else {
-                    Log.e(TAG, "NO DATA")
-                }
-            }
-
-            override fun onCancelled(@NotNull error: DatabaseError) {
-                Log.e(TAG, "NO DATA")
-            }
-        })
-
     }
 
     private fun createAddress(location: Location) {

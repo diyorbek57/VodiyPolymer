@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.database.*
@@ -33,9 +34,11 @@ import uz.ayizor.vp.utils.Utils
 class ShippingAddressFragment : Fragment(R.layout.fragment_shipping_address), EditShippingAddressAdapter.OnItemClickListener {
     lateinit var binding: FragmentShippingAddressBinding
     val TAG: String = OrderShippingAddressFragment::class.java.simpleName
+    lateinit var bottomSheetBinding: ItemAddLocationBottomsheetBinding
     val addressList: ArrayList<Location> = ArrayList()
     lateinit var address: Location
     lateinit var mContext: Context
+    var addressData: AddressData? = null
     lateinit var reference: DatabaseReference
     lateinit var user_id: String
 
@@ -52,7 +55,7 @@ class ShippingAddressFragment : Fragment(R.layout.fragment_shipping_address), Ed
     }
 
     private fun inits() {
-        reference = FirebaseDatabase.getInstance().reference.child("users")
+        reference = FirebaseDatabase.getInstance().reference.child("users_locations")
         binding.rvAddress.layoutManager = LinearLayoutManager(
             mContext,
             LinearLayoutManager.VERTICAL,
@@ -60,6 +63,9 @@ class ShippingAddressFragment : Fragment(R.layout.fragment_shipping_address), Ed
         )
         binding.btnAddNewAddress.setOnClickListener {
             openPlacePicker()
+        }
+        binding.ivBack.setOnClickListener {
+            findNavController().navigateUp()
         }
         getAddresses()
     }
@@ -102,8 +108,8 @@ class ShippingAddressFragment : Fragment(R.layout.fragment_shipping_address), Ed
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == Constants.PLACE_PICKER_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
-                val addressData = data?.getParcelableExtra<AddressData>(Constants.ADDRESS_INTENT)
-                showCreateBottomsheet(addressData)
+                addressData = data?.getParcelableExtra<AddressData>(Constants.ADDRESS_INTENT)
+                showEditBottomsheet(addressData)
 
             }
         } else {
@@ -111,9 +117,9 @@ class ShippingAddressFragment : Fragment(R.layout.fragment_shipping_address), Ed
         }
     }
 
-    private fun showCreateBottomsheet(addressData: AddressData?) {
+    private fun showEditBottomsheet(addressData: AddressData?) {
         val sheetDialog = BottomSheetDialog(mContext, R.style.AppBottomSheetDialogTheme)
-        val bottomSheetBinding: ItemAddLocationBottomsheetBinding =
+        bottomSheetBinding =
             ItemAddLocationBottomsheetBinding.inflate(layoutInflater)
         sheetDialog.setContentView(bottomSheetBinding.root)
         val address = addressData?.longitude?.let {
@@ -128,10 +134,111 @@ class ShippingAddressFragment : Fragment(R.layout.fragment_shipping_address), Ed
         bottomSheetBinding.tvAddress.text = address?.address
         bottomSheetBinding.btnAdd.setOnClickListener {
 
+            if (bottomSheetBinding.isDefault.isChecked) {
+                getDefaultAddress()
+                sheetDialog.dismiss()
+            } else {
+                createAddress(getCreatedAddress())
+                sheetDialog.dismiss()
+            }
+
+
         }
 
         sheetDialog.show();
         sheetDialog.window?.attributes?.windowAnimations = R.style.DialogAnimaton;
+    }
+
+    private fun createAddress(location: Location) {
+
+        reference.push().setValue(location)
+    }
+
+    private fun getDefaultAddress() {
+        var defaultLocation: Location? = null
+        val query: Query = reference.orderByChild("location_user_id")
+            .equalTo(user_id)
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (userSnapshot in snapshot.children) {
+                        Logger.e(TAG, "getDefaultAddress : 1 :" + snapshot.exists().toString())
+
+                        val location = userSnapshot.getValue(Location::class.java)
+                        if (location?.location_isDefault == true && location.location_user_id == user_id) {
+                            defaultLocation = location
+                        }
+
+
+                    }
+                    if (defaultLocation != null) {
+                        val id = defaultLocation!!.location_id.toString()
+                        changeDefaultLocation(id)
+                    } else {
+                        createAddress(getCreatedAddress())
+                    }
+                } else {
+                    createAddress(getCreatedAddress())
+                }
+            }
+
+            override fun onCancelled(@NotNull error: DatabaseError) {
+                Logger.e(TAG, "getDeafultAddress : 1 :" + error.message)
+            }
+        })
+    }
+
+    private fun changeDefaultLocation(locationId: String?) {
+
+        val query: Query =
+            reference.orderByChild("location_user_id").equalTo(user_id)
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            @SuppressLint("SetTextI18n")
+            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (userSnapshot in snapshot.children) {
+                        val location = userSnapshot.getValue(Location::class.java)
+                        if (location?.location_isDefault == true && location.location_user_id == user_id && location.location_id == locationId) {
+                            userSnapshot.ref.child("location_isDefault").setValue(false)
+                                .addOnSuccessListener {
+                                    createAddress(getCreatedAddress())
+                                }
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(@NotNull error: DatabaseError) {}
+        })
+    }
+
+    private fun getCreatedAddress(): Location {
+        if (bottomSheetBinding.etSearch.text.isNullOrEmpty()) {
+            return Location(
+                Utils.getUUID(),
+                user_id,
+                "Address",
+                addressData?.latitude.toString(),
+                addressData?.longitude.toString(),
+                bottomSheetBinding.isDefault.isChecked,
+                Utils.getCurrentTime(),
+                Utils.getCurrentTime()
+            )
+
+
+        } else {
+            return Location(
+                Utils.getUUID(),
+                user_id,
+                bottomSheetBinding.etSearch.text.toString(),
+                addressData?.latitude.toString(),
+                addressData?.longitude.toString(),
+                bottomSheetBinding.isDefault.isChecked,
+                Utils.getCurrentTime(),
+                Utils.getCurrentTime()
+            )
+        }
     }
 
     private fun showEditBottomsheet(location: Location) {
@@ -186,23 +293,7 @@ class ShippingAddressFragment : Fragment(R.layout.fragment_shipping_address), Ed
 
     }
 
-    private fun createAddress(location: Location) {
-        val query: Query = reference.orderByChild("user_id")
-            .equalTo(UserPrefManager(mContext).loadUser()?.user_id)
-        query.addListenerForSingleValueEvent(object : ValueEventListener {
-            @SuppressLint("SetTextI18n")
-            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    for (userSnapshot in snapshot.children) {
-                        userSnapshot.ref.child("user_location").push().setValue(location)
 
-                    }
-                }
-            }
-
-            override fun onCancelled(@NotNull error: DatabaseError) {}
-        })
-    }
 
     override fun onItemClickListener(location: Location) {
         showEditBottomsheet(location)
@@ -211,30 +302,13 @@ class ShippingAddressFragment : Fragment(R.layout.fragment_shipping_address), Ed
     private fun deleteAddress(locationId: String) {
 
         val query: Query =
-            reference.orderByChild("user_id").equalTo(UserPrefManager(mContext).loadUser()?.user_id)
+            reference.orderByChild("location_id").equalTo(locationId)
         query.addValueEventListener(object : ValueEventListener {
             @SuppressLint("SetTextI18n")
             override fun onDataChange(@NotNull snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     for (userSnapshot in snapshot.children) {
-                        userSnapshot.ref.child("user_location").orderByChild("location_id")
-                            .equalTo(locationId).addValueEventListener(object : ValueEventListener {
-                                override fun onDataChange(snapshot: DataSnapshot) {
-                                    for (locationsSnapshot in snapshot.children) {
-                                        if (locationsSnapshot.exists()) {
-                                            locationsSnapshot.ref.removeValue()
-                                        }
-
-
-                                    }
-                                }
-
-                                override fun onCancelled(error: DatabaseError) {
-
-                                }
-
-                            })
-
+                        userSnapshot.ref.removeValue()
                     }
                 }
             }
