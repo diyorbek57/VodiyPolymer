@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="app/src/main/res/drawable/ic_location_bold.xml" value="0.308" />
+        <entry key="app/src/main/res/drawable/ic_star_line.xml" value="0.308" />
+        <entry key="app/src/main/res/drawable/il_no_data.xml" value="0.308" />
+        <entry key="app/src/main/res/drawable/il_track_1.xml" value="0.308" />
+        <entry key="app/src/main/res/drawable/item_bottom_sheet_background.xml" value="0.2405" />
+        <entry key="app/src/main/res/drawable/item_circular_button_background.xml" value="0.2405" />
+        <entry key="app/src/main/res/drawable/item_disabled_background.xml" value="0.2405" />
+        <entry key="app/src/main/res/drawable/item_enabled_background.xml" value="0.2405" />
+        <entry key="app/src/main/res/drawable/item_search_view_background.xml" value="0.2405" />
+        <entry key="app/src/main/res/drawable/rating_bar_full.xml" value="0.308" />
+        <entry key="app/src/main/res/drawable/ratingbar_full_empty.xml" value="0.308" />
+        <entry key="app/src/main/res/drawable/ratingbar_full_filled.xml" value="0.308" />
+        <entry key="app/src/main/res/layout/activity_checkout.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/activity_notification.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/activity_search.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/fragment_cart.xml" value="0.14797136038186157" />
+        <entry key="app/src/main/res/layout/fragment_code_confirm.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/fragment_completed.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_edit_profile.xml" value="0.2078125" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/fragment_language.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/fragment_ongoing.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/fragment_order_shipping_address.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/fragment_orders.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/fragment_profile.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/fragment_shipping_address.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/fragment_track_order.xml" value="0.37395833333333334" />
+        <entry key="app/src/main/res/layout/item_add_location_bottomsheet.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/item_checkout_product.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/item_choose_color.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/item_choose_language.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/item_choose_shipping_address.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/item_double_bottomsheet.xml" value="0.38697916666666665" />
+        <entry key="app/src/main/res/layout/item_edit_shipping_address.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/item_empty_state.xml" value="0.38697916666666665" />
+        <entry key="app/src/main/res/layout/item_leave_review_borromsheet.xml" value="0.38697916666666665" />
+        <entry key="app/src/main/res/layout/item_order.xml" value="0.38697916666666665" />
+        <entry key="app/src/main/res/layout/item_order_product.xml" value="0.3880208333333333" />
+        <entry key="app/src/main/res/layout/view_dialog_double.xml" value="0.3880208333333333" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
+</project>

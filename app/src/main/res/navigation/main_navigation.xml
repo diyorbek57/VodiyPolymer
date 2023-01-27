@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="uz.ayizor.vp.fragment.HomeFragment"
+        android:name="uz.seppuku.vp.fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_cart"
-        android:name="uz.ayizor.vp.fragment.CartFragment"
+        android:name="uz.seppuku.vp.fragment.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart">
         <action
@@ -41,7 +41,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_profile"
-        android:name="uz.ayizor.vp.fragment.ProfileFragment"
+        android:name="uz.seppuku.vp.fragment.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile">
         <action
@@ -82,7 +82,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_orders"
-        android:name="uz.ayizor.vp.fragment.OrdersFragment"
+        android:name="uz.seppuku.vp.fragment.OrdersFragment"
         android:label=""
         tools:layout="@layout/fragment_orders" >
         <action
@@ -95,7 +95,7 @@
     </fragment>
     <fragment
         android:id="@+id/checkoutActivity"
-        android:name="uz.ayizor.vp.fragment.CheckoutFragment"
+        android:name="uz.seppuku.vp.fragment.CheckoutFragment"
         android:label="activity_checkout"
         tools:layout="@layout/activity_checkout">
         <argument
@@ -122,7 +122,7 @@
     </fragment>
     <fragment
         android:id="@+id/trackOrderFragment"
-        android:name="uz.ayizor.vp.fragment.orders.TrackOrderFragment"
+        android:name="uz.seppuku.vp.fragment.orders.TrackOrderFragment"
         android:label="fragment_track_order"
         tools:layout="@layout/fragment_track_order" >
         <argument
@@ -131,7 +131,7 @@
     </fragment>
     <fragment
         android:id="@+id/ongoingOrdersFragment"
-        android:name="uz.ayizor.vp.fragment.orders.OngoingOrdersFragment"
+        android:name="uz.seppuku.vp.fragment.orders.OngoingOrdersFragment"
         android:label="fragment_ongoing"
         tools:layout="@layout/fragment_ongoing" >
         <action
@@ -140,7 +140,7 @@
     </fragment>
     <fragment
         android:id="@+id/orderShippingAddressFragment"
-        android:name="uz.ayizor.vp.fragment.orders.OrderShippingAddressFragment"
+        android:name="uz.seppuku.vp.fragment.orders.OrderShippingAddressFragment"
         android:label="fragment_shipping_address"
         tools:layout="@layout/fragment_order_shipping_address" >
         <action
@@ -152,27 +152,27 @@
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
-        android:name="uz.ayizor.vp.fragment.EditProfileFragment"
+        android:name="uz.seppuku.vp.fragment.EditProfileFragment"
         android:label="fragment_edit_profile"
         tools:layout="@layout/fragment_edit_profile" />
     <fragment
         android:id="@+id/shippingAddressFragment"
-        android:name="uz.ayizor.vp.fragment.ShippingAddressFragment"
+        android:name="uz.seppuku.vp.fragment.ShippingAddressFragment"
         android:label="fragment_shipping_address"
         tools:layout="@layout/fragment_shipping_address" />
     <fragment
         android:id="@+id/languageFragment"
-        android:name="uz.ayizor.vp.fragment.LanguageFragment"
+        android:name="uz.seppuku.vp.fragment.LanguageFragment"
         android:label="fragment_language"
         tools:layout="@layout/fragment_language" />
     <fragment
         android:id="@+id/searchFragment"
-        android:name="uz.ayizor.vp.fragment.SearchFragment"
+        android:name="uz.seppuku.vp.fragment.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
     <fragment
         android:id="@+id/detailsFragment"
-        android:name="uz.ayizor.vp.activity.DetailsActivity"
+        android:name="uz.seppuku.vp.activity.DetailsActivity"
         android:label="fragment_details"
         tools:layout="@layout/activity_details" >
         <argument
@@ -181,12 +181,12 @@
     </fragment>
     <fragment
         android:id="@+id/notificationSettingFragment"
-        android:name="uz.ayizor.vp.fragment.NotificationSettingFragment"
+        android:name="uz.seppuku.vp.fragment.NotificationSettingFragment"
         android:label="fragment_notification_setting"
         tools:layout="@layout/fragment_notification_setting" />
     <fragment
         android:id="@+id/privacyPolicyFragment"
-        android:name="uz.ayizor.vp.fragment.PrivacyPolicyFragment"
+        android:name="uz.seppuku.vp.fragment.PrivacyPolicyFragment"
         android:label="fragment_privacy_policy"
         tools:layout="@layout/fragment_privacy_policy" />
 
