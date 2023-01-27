@@ -18,6 +18,7 @@ import uz.seppuku.vp.model.Cart
 import uz.seppuku.vp.model.Location
 import uz.seppuku.vp.model.listmodel.OrdersList
 import uz.seppuku.vp.utils.Logger
+import uz.seppuku.vp.R
 
 class CartFragment : Fragment() {
 

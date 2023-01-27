@@ -17,6 +17,7 @@ import com.mcdev.quantitizerlibrary.QuantitizerListener
 import uz.seppuku.vp.databinding.ItemCartBinding
 import uz.seppuku.vp.model.Cart
 import uz.seppuku.vp.model.Product
+import uz.seppuku.vp.R
 
 open class CartAdapter(
     val context: Context,

@@ -27,7 +27,7 @@ import uz.seppuku.vp.model.Location
 import uz.seppuku.vp.model.Order
 import uz.seppuku.vp.utils.Logger
 import uz.seppuku.vp.utils.Utils
-
+import uz.seppuku.vp.R
 
 class CheckoutFragment : Fragment(R.layout.activity_checkout) {
 

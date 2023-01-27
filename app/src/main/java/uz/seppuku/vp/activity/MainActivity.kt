@@ -20,6 +20,7 @@ import uz.seppuku.vp.helper.NetworkConnectivityObserver
 import uz.seppuku.vp.manager.UserPrefManager
 import uz.seppuku.vp.model.Location
 import uz.seppuku.vp.model.User
+import uz.seppuku.vp.R
 import uz.seppuku.vp.utils.Logger
 
 

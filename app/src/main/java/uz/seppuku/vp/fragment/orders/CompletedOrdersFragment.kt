@@ -20,6 +20,7 @@ import uz.seppuku.vp.manager.UserPrefManager
 import uz.seppuku.vp.model.Order
 import uz.seppuku.vp.model.Product
 import uz.seppuku.vp.utils.Logger
+import uz.seppuku.vp.R
 
 class CompletedOrdersFragment : Fragment(), CompletedOrdersAdapter.OnActionButtonClickListener {
 

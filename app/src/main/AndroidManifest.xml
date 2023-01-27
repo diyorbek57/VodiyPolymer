@@ -29,6 +29,7 @@
         android:protectionLevel="signature" />
 
     <application
+        android:name="uz.seppuku.vp.VodiyPolymerApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -67,10 +68,6 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".fragment.SearchFragment"
-            android:exported="true"
-            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

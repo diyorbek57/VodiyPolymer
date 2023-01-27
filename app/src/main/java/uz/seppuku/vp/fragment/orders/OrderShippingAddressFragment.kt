@@ -25,6 +25,7 @@ import uz.seppuku.vp.manager.UserPrefManager
 import uz.seppuku.vp.model.Location
 import uz.seppuku.vp.utils.Logger
 import uz.seppuku.vp.utils.Utils
+import uz.seppuku.vp.R
 
 class OrderShippingAddressFragment : Fragment(R.layout.fragment_order_shipping_address),
     ChooseShippingAddressAdapter.OnRadioButtonClickListener {

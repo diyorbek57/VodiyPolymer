@@ -25,6 +25,7 @@ import uz.seppuku.vp.utils.Logger
 import uz.seppuku.vp.utils.Utils
 import java.util.*
 import java.util.concurrent.TimeUnit
+import uz.seppuku.vp.R
 
 
 class CodeConfirmFragment : Fragment() {

@@ -16,6 +16,7 @@ import uz.seppuku.vp.databinding.FragmentOngoingBinding
 import uz.seppuku.vp.fragment.OrdersFragmentDirections
 import uz.seppuku.vp.manager.UserPrefManager
 import uz.seppuku.vp.model.Order
+import uz.seppuku.vp.R
 
 class OngoingOrdersFragment : Fragment(), OrderAdapter.OnActionButtonClickListener {
 

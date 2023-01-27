@@ -100,7 +100,7 @@
         tools:layout="@layout/activity_checkout">
         <argument
             android:name="orderList"
-            app:argType="uz.ayizor.vp.model.listmodel.OrdersList" />
+            app:argType="uz.seppuku.vp.model.listmodel.OrdersList" />
         <action
             android:id="@+id/action_checkoutActivity_to_nav_orders"
             app:destination="@id/nav_orders"
@@ -118,7 +118,7 @@
             app:destination="@id/orderShippingAddressFragment" />
         <argument
             android:name="DefaultLocation"
-            app:argType="uz.ayizor.vp.model.Location" />
+            app:argType="uz.seppuku.vp.model.Location" />
     </fragment>
     <fragment
         android:id="@+id/trackOrderFragment"
@@ -127,7 +127,7 @@
         tools:layout="@layout/fragment_track_order" >
         <argument
             android:name="order"
-            app:argType="uz.ayizor.vp.model.Order" />
+            app:argType="uz.seppuku.vp.model.Order" />
     </fragment>
     <fragment
         android:id="@+id/ongoingOrdersFragment"

@@ -11,6 +11,7 @@ import com.google.firebase.database.*
 import com.google.firebase.database.annotations.NotNull
 import uz.seppuku.vp.databinding.FragmentEditProfileBinding
 import uz.seppuku.vp.manager.UserPrefManager
+import uz.seppuku.vp.R
 
 
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
