@@ -10,7 +10,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "uz.ayizor.vp"
+        applicationId "uz.seppuku.vp"
         minSdk 24
         targetSdk 33
         versionCode 1
@@ -41,7 +41,7 @@ android {
     buildFeatures {
         viewBinding true
     }
-    namespace 'uz.ayizor.vp'
+    namespace 'uz.seppuku.vp'
 }
 
 dependencies {

@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:179377764678:android:a5fc431db917c13699cd47",
+        "mobilesdk_app_id": "1:179377764678:android:e567d263582934d699cd47",
         "android_client_info": {
-          "package_name": "uz.ayizor.vp"
+          "package_name": "uz.seppuku.vp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "179377764678-r5egtjnb9fo86qbscg1mtbnp67um2jje.apps.googleusercontent.com",
+          "client_id": "179377764678-kaucku15ddo5ki4gn4gfnm40mb1p84eo.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "uz.ayizor.vp",
+            "package_name": "uz.seppuku.vp",
             "certificate_hash": "b76b9731d5eaacf21214261f8f9b3576be034402"
           }
         },
