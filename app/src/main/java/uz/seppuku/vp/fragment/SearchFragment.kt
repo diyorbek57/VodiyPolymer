@@ -33,6 +33,7 @@ class SearchFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
     val TAG: String = SearchFragment::class.java.simpleName
     var database = FirebaseDatabase.getInstance().reference
     lateinit var mContext: Context
+    val adapter = ProductsAdapter(requireContext(), this)
     var historyList: ArrayList<String> = ArrayList()
     val productsList: ArrayList<Product> = ArrayList()
     override fun onCreateView(
@@ -86,7 +87,7 @@ class SearchFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
             GridLayoutManager.VERTICAL,
             false
         )
-        val adapter = ProductsAdapter(requireContext(), products, this)
+
         binding.rvSearchResults.adapter = adapter
 
 

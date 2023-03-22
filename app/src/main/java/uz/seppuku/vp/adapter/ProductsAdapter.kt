@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -14,36 +16,30 @@ import uz.seppuku.vp.model.Product
 
 class ProductsAdapter(
     val context: Context,
-    private var postsList: ArrayList<Product>,
     private val onPostItemClickListener: OnPostItemClickListener
-) : RecyclerView.Adapter<ProductsAdapter.ItemMainPostViewHolder>() {
+) : ListAdapter<Product, ProductsAdapter.ViewHolder>(DiffCallback()) {
 
 
     val TAG: String = ProductsAdapter::class.java.simpleName
     private lateinit var binding: ItemProductBinding
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemMainPostViewHolder {
-
-        binding = ItemProductBinding.inflate(LayoutInflater.from(context), parent, false)
-        return ItemMainPostViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        binding = ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
 
 
     }
 
     @SuppressLint("SetTextI18n")
-    override fun onBindViewHolder(holder: ItemMainPostViewHolder, position: Int) {
-        val product = postsList[position]
-        holder.bindProduct(product)
-
-    }
-
-    override fun getItemCount(): Int {
-        return postsList.size
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val currentItem = getItem(position)
+        holder.bind(currentItem)
     }
 
 
-    inner class ItemMainPostViewHolder(val binding: ItemProductBinding) :
+
+    inner class ViewHolder(val binding: ItemProductBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bindProduct(product: Product) {
+        fun bind(product: Product) {
 
             with(product) {
 
@@ -74,7 +70,14 @@ class ProductsAdapter(
             }
         }
     }
+    class DiffCallback : DiffUtil.ItemCallback<Product>() {
+        override fun areItemsTheSame(oldItem: Product, newItem: Product) =
+            oldItem.product_id == newItem.product_id
 
+        override fun areContentsTheSame(oldItem: Product, newItem: Product) =
+            oldItem == newItem
+
+    }
     interface OnPostItemClickListener {
         fun onPostItemClickListener(id: String, binding: ItemProductBinding )
     }

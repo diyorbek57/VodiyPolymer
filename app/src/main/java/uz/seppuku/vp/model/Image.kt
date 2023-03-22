@@ -2,7 +2,9 @@ package uz.seppuku.vp.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Parcelize
 data class Image(
     val image_id: String? = null,

@@ -12,8 +12,9 @@ import com.google.firebase.appcheck.FirebaseAppCheck
 import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import com.google.firebase.database.*
 import com.google.firebase.database.annotations.NotNull
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import uz.seppuku.afeme.utils.Extensions.toast
+import uz.seppuku.vp.utils.Extensions.toast
 import uz.seppuku.vp.databinding.ActivityMainBinding
 import uz.seppuku.vp.helper.ConnectivityObserver
 import uz.seppuku.vp.helper.NetworkConnectivityObserver
@@ -23,7 +24,7 @@ import uz.seppuku.vp.model.User
 import uz.seppuku.vp.R
 import uz.seppuku.vp.utils.Logger
 
-
+@AndroidEntryPoint
 class MainActivity : BaseActivity() {
 
     lateinit var binding: ActivityMainBinding

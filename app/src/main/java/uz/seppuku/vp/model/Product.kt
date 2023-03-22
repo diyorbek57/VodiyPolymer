@@ -2,14 +2,17 @@ package uz.seppuku.vp.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Parcelize
-data class  Product(
+data class Product(
     val product_id: String? = null,
     val product_category_id: String? = null,
     val product_name: String? = null,
     val product_description: String? = null,
     val product_price: String? = null,
+    val product_unit_of_measurement: String? = null,
     val product_rating: Double? = null,
     val product_sold: String? = null,
     val product_discount: String? = null,

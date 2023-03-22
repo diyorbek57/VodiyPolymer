@@ -6,10 +6,12 @@ import android.annotation.SuppressLint
 import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Pair.create
 import android.view.View
 import uz.seppuku.vp.R
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,6 +23,7 @@ import com.google.firebase.database.annotations.NotNull
 import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
 import com.youth.banner.indicator.CircleIndicator
+import dagger.hilt.android.AndroidEntryPoint
 import uz.seppuku.vp.activity.NotificationActivity
 import uz.seppuku.vp.adapter.CategoryAdapter
 import uz.seppuku.vp.adapter.ProductsAdapter
@@ -29,15 +32,21 @@ import uz.seppuku.vp.databinding.ItemProductBinding
 import uz.seppuku.vp.model.Category
 import uz.seppuku.vp.model.Product
 import uz.seppuku.vp.utils.Logger
+import uz.seppuku.vp.utils.Resource
+import uz.seppuku.vp.viewmodel.HomeViewModel
 
-
+@AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostItemClickListener,
     CategoryAdapter.OnCategoryItemClickListener {
 
 
-    private lateinit var binding: FragmentHomeBinding
-
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
     val TAG: String = HomeFragment::class.java.simpleName
+    private val viewModel by viewModels<HomeViewModel>()
+
+    //adapter
+    var productsAdapter: ProductsAdapter? = null
 
     //variables
     lateinit var product: Product
@@ -48,52 +57,76 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentHomeBinding.bind(view)
+        _binding = FragmentHomeBinding.bind(view)
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
-
+        productsAdapter = ProductsAdapter(requireContext(), this)
         inits()
     }
 
     override fun onResume() {
         super.onResume()
 
-        getDiscountProducts()
-        getProducts()
-        getCategory()
+        viewModel.getAllProducts()
     }
 
     @SuppressLint("SimpleDateFormat")
     private fun inits() {
+        initUI()
+        observer()
 
-        binding.rvProducts.layoutManager = GridLayoutManager(
-            requireContext(), 2,
-            GridLayoutManager.VERTICAL,
-            false
-        )
-        binding.rvCategories.layoutManager = GridLayoutManager(
-            requireContext(), 1,
-            GridLayoutManager.HORIZONTAL,
-            false
-        )
 
-        binding.ivNotifications.setOnClickListener {
-            val intent = Intent(requireContext(), NotificationActivity::class.java)
-            startActivity(intent)
-        }
-        binding.flSearch.setOnClickListener {
-            val extras = FragmentNavigatorExtras(binding.flSearch to "search_field")
-            findNavController().navigate(
-                R.id.action_nav_home_to_searchFragment,
-                null,
-                null,
-                extras
+    }
+
+    private fun initUI() {
+        binding.apply {
+
+            rvProducts.layoutManager = GridLayoutManager(
+                requireContext(), 2,
+                GridLayoutManager.VERTICAL,
+                false
+            )
+            rvProducts.adapter = productsAdapter
+            rvCategories.layoutManager = GridLayoutManager(
+                requireContext(), 1,
+                GridLayoutManager.HORIZONTAL,
+                false
             )
 
-        }
+            ivNotifications.setOnClickListener {
+                val intent = Intent(requireContext(), NotificationActivity::class.java)
+                startActivity(intent)
+            }
+            flSearch.setOnClickListener {
+                val extras = FragmentNavigatorExtras(binding.flSearch to "search_field")
+                findNavController().navigate(
+                    R.id.action_nav_home_to_searchFragment,
+                    null,
+                    null,
+                    extras
+                )
 
-        binding.ivFavorites.setOnClickListener {
-        }
+            }
 
+            ivFavorites.setOnClickListener {
+            }
+        }
+    }
+
+    private fun observer() {
+        viewModel.products.observe(viewLifecycleOwner) {
+            when (it.status) {
+                Resource.Status.SUCCESS -> {
+                    productsAdapter?.submitList(it.data)
+                }
+                Resource.Status.ERROR -> {
+                    //      it.data?.status?.let { it1 -> Log.e(TAG, it1) }
+//                    hideLoading(bn.progressbar, bn.btnSignIn)
+                }
+                Resource.Status.LOADING -> {
+                    //  showLoading(bn.progressbar, bn.btnSignIn)
+                }
+            }
+        }
     }
 
     private fun setupBanner(product: ArrayList<Product>) {
@@ -120,22 +153,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
 
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun refreshProductsAdapter(products: ArrayList<Product>) {
-        val adapter = ProductsAdapter(requireContext(), products, this)
-        binding.rvProducts.apply {
-            binding.rvProducts.adapter = adapter
-            postponeEnterTransition()
-            viewTreeObserver
-                .addOnPreDrawListener {
-                    startPostponedEnterTransition()
-                    true
-                }
-        }
-        binding.flSearch.visibility = View.VISIBLE
-        binding.vpBanner.visibility = View.VISIBLE
-
-    }
 
     private fun refreshCategoryAdapter(category: ArrayList<Category>) {
         val adapter = CategoryAdapter(requireContext(), category, this)
@@ -145,75 +162,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
 
     }
 
-    private fun getProducts() {
-        getAllProducts()
-    }
-
-    private fun getAllProducts() {
-        val productsList: ArrayList<Product> = ArrayList()
-        val reference = database.getReference("products")
-        reference.addValueEventListener(object : ValueEventListener {
-            @SuppressLint("SetTextI18n")
-            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    productsList.clear()
-                    for (userSnapshot in snapshot.children) {
-                        product = userSnapshot.getValue(Product::class.java)!!
-                        if (product != null) {
-                            productsList.add(product)
-                        }
-                    }
-
-                    refreshProductsAdapter(productsList)
-                    showViewWithAnimations(binding.rvProducts)
-
-
-                } else {
-                    Logger.e(TAG, "getAllProducts: snapshot = null ")
-
-                }
-            }
-
-            override fun onCancelled(@NotNull error: DatabaseError) {
-                Logger.e(TAG, error.message)
-            }
-        })
-    }
-
-    private fun getProductByCategory(categoryId: String?) {
-        val productsList: ArrayList<Product> = ArrayList()
-        val reference = database.getReference("products")
-        val query: Query =
-            reference.orderByChild("product_category_id")
-                .equalTo(categoryId)
-        query.addValueEventListener(object : ValueEventListener {
-            @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
-            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    productsList.clear()
-                    for (userSnapshot in snapshot.children) {
-                        product = userSnapshot.getValue(Product::class.java)!!
-                        if (product != null) {
-                            productsList.add(product)
-                        }
-                    }
-                    Logger.e(TAG, productsList.size.toString())
-
-                    refreshProductsAdapter(productsList)
-                    showViewWithAnimations(binding.rvProducts)
-
-
-                } else {
-                    Logger.e(TAG, "getProductByCategory: snapshot = null ")
-
-                }
-            }
-
-            override fun onCancelled(@NotNull error: DatabaseError) {
-                Logger.e(TAG, error.message)
-            }
-        })
-    }
 
     private fun getCategory() {
         val categoriesList: ArrayList<Category> = ArrayList()
@@ -299,10 +247,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
 
     override fun onCategoryItemClickListener(id: String) {
         if (id.contentEquals("all")) {
-            getAllProducts()
 
         } else {
-            getProductByCategory(id)
+
         }
 
     }
@@ -333,6 +280,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
                 }
             })
 
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 
