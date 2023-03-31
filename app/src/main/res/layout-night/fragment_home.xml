@@ -4,17 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/very_dark_blue_mostly_black"
     tools:context=".fragment.HomeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:elevation="0dp"
         android:stateListAnimator="@null">
 
         <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
+            android:background="@color/very_dark_blue_mostly_black"
             android:layout_height="?attr/actionBarSize"
             android:stateListAnimator="@null"
             app:contentInsetStart="0dp"
@@ -35,9 +36,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
                     android:layout_toStartOf="@id/iv_favorites"
-                    android:src="@drawable/ic_notification_line" />
+                    android:src="@drawable/ic_notification_line"
+                    app:tint="@color/white" />
 
                 <ImageView
+                    app:tint="@color/white"
                     android:id="@+id/iv_favorites"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -80,20 +83,19 @@
                         android:id="@+id/fl_search"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/item_search_view_background"
+                        android:background="@drawable/item_search_view_background_night"
                         android:paddingHorizontal="25dp"
                         android:paddingVertical="10dp"
                         android:transitionName="search_field">
-
 
                         <TextView
                             android:id="@+id/et_search"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
-                            android:hint="@string/search"
+                            android:text="@string/search"
+                            android:textColor="@color/dark_gray"
                             android:padding="3dp"
-                            android:textSize="16dp" />
+                            android:textSize="16sp" />
 
 
                     </FrameLayout>
@@ -104,7 +106,7 @@
 
 
                     <com.youth.banner.Banner
-                        android:background="@drawable/item_search_view_background"
+                        android:background="@drawable/item_search_view_background_night"
                         app:banner_radius="10dp"
                         android:id="@+id/vp_banner"
                         android:layout_width="match_parent"
@@ -132,7 +134,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <ProgressBar
-        android:indeterminateTint="@color/very_dark_gray_mostly_black"
+        android:indeterminateTint="@color/white"
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

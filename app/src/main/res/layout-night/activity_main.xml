@@ -21,9 +21,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
+        app:backgroundTint="@color/very_dark_blue_mostly_black"
         app:elevation="0dp"
-        app:backgroundTint="@color/white"
-        app:itemIconTint="@color/very_dark_gray_mostly_black"
-        app:itemTextColor="@color/very_dark_gray_mostly_black"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
         app:menu="@menu/main_bottom_navigation_menu" />
 </RelativeLayout>

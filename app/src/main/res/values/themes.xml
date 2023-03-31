@@ -1,16 +1,25 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.VodiyPolymer" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/very_dark_gray_mostly_black</item>
-        <item name="colorPrimaryVariant">@color/very_dark_gray_mostly_black</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/very_dark_gray_mostly_black</item>
-        <item name="colorSecondaryVariant">@color/very_dark_gray_mostly_black</item>
-        <item name="colorOnSecondary">@color/black</item>
+    <style name="Theme.VodiyPolymer" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+<!--        &lt;!&ndash; Primary brand color. &ndash;&gt;-->
+<!--        <item name="colorPrimary">@color/white</item>-->
+<!--        <item name="colorPrimaryVariant">@color/very_dark_gray_mostly_black</item>-->
+<!--        <item name="colorOnPrimary">@color/very_dark_gray_mostly_black</item>-->
+<!--        &lt;!&ndash; background color &ndash;&gt;-->
+<!--        <item name="background">@color/white</item>-->
+<!--        <item name="colorOnBackground">@color/very_dark_gray_mostly_black</item>-->
+<!--        &lt;!&ndash; Secondary brand color. &ndash;&gt;-->
+<!--        <item name="colorSecondary">@color/very_dark_gray_mostly_black</item>-->
+<!--        <item name="colorOnSecondary">@color/very_dark_gray_mostly_black</item>-->
+<!--        &lt;!&ndash; surface color&ndash;&gt;-->
+<!--        <item name="colorSurface">@color/white</item>-->
+<!--        <item name="colorOnSurface">@color/very_dark_gray_mostly_black</item>-->
+<!--        &lt;!&ndash; error color &ndash;&gt;-->
+<!--        <item name="colorError">@color/red</item>-->
+<!--        <item name="colorOnError">@color/white</item>-->
+
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/white</item>
         <!-- Customize your theme here. -->
     </style>
     //pdf reader
