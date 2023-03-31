@@ -56,7 +56,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.DetailsActivity"
+            android:name=".fragment.DetailsFragment"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

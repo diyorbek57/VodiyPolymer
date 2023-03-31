@@ -6,7 +6,6 @@ import android.annotation.SuppressLint
 import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.util.Pair.create
 import android.view.View
 import uz.seppuku.vp.R
@@ -19,7 +18,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.database.*
-import com.google.firebase.database.annotations.NotNull
 import com.youth.banner.adapter.BannerImageAdapter
 import com.youth.banner.holder.BannerImageHolder
 import com.youth.banner.indicator.CircleIndicator
@@ -29,10 +27,12 @@ import uz.seppuku.vp.adapter.CategoryAdapter
 import uz.seppuku.vp.adapter.ProductsAdapter
 import uz.seppuku.vp.databinding.FragmentHomeBinding
 import uz.seppuku.vp.databinding.ItemProductBinding
-import uz.seppuku.vp.model.Category
 import uz.seppuku.vp.model.Product
+import uz.seppuku.vp.utils.Extensions.toast
 import uz.seppuku.vp.utils.Logger
 import uz.seppuku.vp.utils.Resource
+import uz.seppuku.vp.utils.Utils.hideLoading
+import uz.seppuku.vp.utils.Utils.showLoading
 import uz.seppuku.vp.viewmodel.HomeViewModel
 
 @AndroidEntryPoint
@@ -48,10 +48,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
     //adapter
     var productsAdapter: ProductsAdapter? = null
 
+
     //variables
     lateinit var product: Product
-    lateinit var category: Category
-    var database = FirebaseDatabase.getInstance()
     private var shortAnimationDuration: Int = 0
 
 
@@ -60,6 +59,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
         _binding = FragmentHomeBinding.bind(view)
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
         productsAdapter = ProductsAdapter(requireContext(), this)
+
         inits()
     }
 
@@ -67,6 +67,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
         super.onResume()
 
         viewModel.getAllProducts()
+
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -86,11 +87,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
                 false
             )
             rvProducts.adapter = productsAdapter
-            rvCategories.layoutManager = GridLayoutManager(
-                requireContext(), 1,
-                GridLayoutManager.HORIZONTAL,
-                false
-            )
+
+
 
             ivNotifications.setOnClickListener {
                 val intent = Intent(requireContext(), NotificationActivity::class.java)
@@ -117,16 +115,18 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
             when (it.status) {
                 Resource.Status.SUCCESS -> {
                     productsAdapter?.submitList(it.data)
+                    hideLoading(binding.progressBar)
                 }
                 Resource.Status.ERROR -> {
-                    //      it.data?.status?.let { it1 -> Log.e(TAG, it1) }
-//                    hideLoading(bn.progressbar, bn.btnSignIn)
+                    it.message?.let { it1 -> Logger.e(TAG, it1) }
+                    hideLoading(binding.progressBar)
                 }
                 Resource.Status.LOADING -> {
-                    //  showLoading(bn.progressbar, bn.btnSignIn)
+                    showLoading(binding.progressBar)
                 }
             }
         }
+
     }
 
     private fun setupBanner(product: ArrayList<Product>) {
@@ -148,88 +148,13 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
                 }
             }
         })
-            .addBannerLifecycleObserver(this) //添加生命周期观察者
-            .setIndicator(CircleIndicator(requireContext()))
+            .addBannerLifecycleObserver(this).indicator = CircleIndicator(requireContext())
 
     }
 
-
-    private fun refreshCategoryAdapter(category: ArrayList<Category>) {
-        val adapter = CategoryAdapter(requireContext(), category, this)
-        binding.rvCategories.adapter = adapter
-//        binding.progressBar.visibility = View.GONE
-//        binding.llMain.visibility = View.VISIBLE
-
-    }
-
-
-    private fun getCategory() {
-        val categoriesList: ArrayList<Category> = ArrayList()
-        val reference = database.getReference("categories")
-
-        reference.addValueEventListener(object : ValueEventListener {
-            @SuppressLint("SetTextI18n")
-            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    categoriesList.clear()
-                    categoriesList.add(
-                        Category(
-                            "all",
-                            getString(uz.seppuku.vp.R.string.all),
-                            null,
-                            null
-                        )
-                    )
-                    for (userSnapshot in snapshot.children) {
-                        category = userSnapshot.getValue(Category::class.java)!!
-                        if (category != null) {
-                            categoriesList.add(category)
-                        }
-                    }
-
-                    refreshCategoryAdapter(categoriesList)
-                }
-            }
-
-            override fun onCancelled(@NotNull error: DatabaseError) {}
-        })
-
-
-    }
-
-    private fun getDiscountProducts() {
-        val productsList: ArrayList<Product> = ArrayList()
-        val reference = database.getReference("products")
-        val query: Query =
-            reference.orderByChild("product_discount").startAfter("0")
-        query.addValueEventListener(object : ValueEventListener {
-            @SuppressLint("SetTextI18n")
-            override fun onDataChange(@NotNull snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    productsList.clear()
-                    for (userSnapshot in snapshot.children) {
-                        product = userSnapshot.getValue(Product::class.java)!!
-                        if (product != null) {
-                            productsList.add(product)
-                        }
-                    }
-                    setupBanner(productsList)
-                } else {
-                    Logger.e(TAG, "getProductByCategory: snapshot = null ")
-
-                }
-            }
-
-            override fun onCancelled(@NotNull error: DatabaseError) {
-                Logger.e(TAG, error.message)
-            }
-        })
-
-
-    }
 
     override fun onPostItemClickListener(id: String, binding: ItemProductBinding) {
-        val intent = Intent(requireContext(), uz.seppuku.vp.activity.DetailsActivity::class.java)
+        val intent = Intent(requireContext(), DetailsFragment::class.java)
         intent.putExtra("id", id)
         val imagePair = create<View, String>(binding.ivImage, "image_field")
         val titlePair = create<View, String>(binding.tvTitle, "title_field")
@@ -246,11 +171,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
     }
 
     override fun onCategoryItemClickListener(id: String) {
-        if (id.contentEquals("all")) {
-
-        } else {
-
-        }
+        toast(id)
 
     }
 

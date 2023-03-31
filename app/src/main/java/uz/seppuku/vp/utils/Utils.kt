@@ -17,9 +17,11 @@ import android.text.format.DateFormat
 import android.text.format.DateUtils
 import android.util.DisplayMetrics
 import android.view.Gravity
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
@@ -253,7 +255,13 @@ object Utils {
         resources.updateConfiguration(config, resources.displayMetrics)
         return config
     }
+fun showLoading(progressBar: ProgressBar){
+    progressBar.visibility =View.VISIBLE
+}
 
+    fun hideLoading(progressBar: ProgressBar){
+        progressBar.visibility =View.GONE
+    }
 
 }
 

@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.transition.TransitionInflater
 import com.google.firebase.database.*
-import uz.seppuku.vp.activity.DetailsActivity
 import uz.seppuku.vp.adapter.ProductsAdapter
 import uz.seppuku.vp.adapter.RecentSearchesAdapter
 import uz.seppuku.vp.databinding.FragmentSearchBinding
@@ -137,7 +136,7 @@ class SearchFragment : Fragment(), ProductsAdapter.OnPostItemClickListener,
     }
 
     override fun onPostItemClickListener(id: String, binding: ItemProductBinding) {
-        val intent = Intent(requireContext(), DetailsActivity::class.java)
+        val intent = Intent(requireContext(), DetailsFragment::class.java)
         intent.putExtra("id", id)
         val imagePair = Pair.create<View, String>(binding.ivImage, "image_field")
         val titlePair = Pair.create<View, String>(binding.tvTitle, "title_field")

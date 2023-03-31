@@ -9,6 +9,7 @@ import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import uz.seppuku.vp.model.Category
 import uz.seppuku.vp.model.Product
 import uz.seppuku.vp.utils.Logger
 import uz.seppuku.vp.utils.Resource
@@ -21,6 +22,9 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     val TAG = "HomeViewModel"
+    //category list livedata
+    private var _category = SingleLiveEvent<Resource<List<Category>>>()
+    val category: LiveData<Resource<List<Category>>> get() = _category
 
     //products list livedata
     private var _products = SingleLiveEvent<Resource<List<Product>>>()
@@ -31,10 +35,13 @@ class HomeViewModel @Inject constructor(
     val product: LiveData<Resource<Product>> get() = _product
 
     //list for put products from database
-    val productsList = ArrayList<Product>()
+   private val productsList = ArrayList<Product>()
+
+    //list for put categories from database
+  private  val categoriesList = ArrayList<Category>()
 
     //object for get single product and return it
-    var singleProduct = Product()
+  private  var singleProduct = Product()
 
     fun getAllProducts() = viewModelScope.launch(Dispatchers.IO) {
         try {
@@ -116,6 +123,36 @@ class HomeViewModel @Inject constructor(
                 .addOnFailureListener { exception ->
                     Logger.e(TAG, "get failed with $exception")
                     _product.postValue(Resource.error(exception.message.toString()))
+                }
+        } catch (e: Exception) {
+            e.localizedMessage ?: "error"
+        }
+    }
+
+    fun getAllCategories() = viewModelScope.launch(Dispatchers.IO) {
+        try {
+            _category.postValue(Resource.loading())
+            categoriesList.clear()
+            database.collection("categories").get()
+                .addOnSuccessListener { documents ->
+                    if (!documents.isEmpty) {
+                        for (document in documents.documents) {
+                            document.toObject(Category::class.java)!!.category_id?.let {
+                                Logger.d(
+                                    TAG,
+                                    it
+                                )
+                            }
+                            categoriesList.add(document.toObject<Category>()!!)
+                        }
+                        _category.postValue(Resource.success(categoriesList))
+                    } else {
+                        Logger.d(TAG, "Categories : No such document")
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Logger.e(TAG, "get failed with $exception")
+                    _category.postValue(Resource.error(exception.message.toString()))
                 }
         } catch (e: Exception) {
             e.localizedMessage ?: "error"

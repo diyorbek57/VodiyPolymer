@@ -172,9 +172,9 @@
         tools:layout="@layout/fragment_search" />
     <fragment
         android:id="@+id/detailsFragment"
-        android:name="uz.seppuku.vp.activity.DetailsActivity"
+        android:name="uz.seppuku.vp.fragment.DetailsFragment"
         android:label="fragment_details"
-        tools:layout="@layout/activity_details" >
+        tools:layout="@layout/fragment_details" >
         <argument
             android:name="product_id"
             app:argType="string" />

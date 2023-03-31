@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="uz.seppuku.vp.activity.DetailsActivity">
+    tools:context="uz.seppuku.vp.fragment.DetailsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -106,8 +106,7 @@
                     android:fontFamily="@font/generalsans_semibold"
                     android:maxLines="2"
                     android:textColor="@color/very_dark_gray_mostly_black"
-                    android:textSize="20sp"
-                    android:transitionName="title_field" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/tv_price"
@@ -116,21 +115,33 @@
                     android:fontFamily="@font/generalsans_semibold"
                     android:textAlignment="center"
                     android:textColor="@color/very_dark_gray_mostly_black"
-                    android:textSize="20sp"
-                    android:transitionName="price_field" />
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:id="@+id/tv_sold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="6dp"
+                    android:layout_marginVertical="4dp"
+                    android:background="@drawable/item_search_view_background"
+                    android:fontFamily="@font/generalsans_semibold"
+                    android:padding="5dp"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="15sp" />
 
                 <LinearLayout
-                    android:transitionName="rating_field"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="5dp"
+                    android:layout_marginStart="15dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -145,23 +156,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5dp"
                         android:fontFamily="@font/generalsans_medium"
-
                         android:textColor="@color/dark_gray"
                         android:textSize="14sp" />
                 </LinearLayout>
-
-                <TextView
-                    android:id="@+id/tv_sold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="6dp"
-                    android:layout_marginVertical="4dp"
-                    android:padding="5dp"
-                    android:transitionName="solds_field"
-                    android:background="@drawable/item_search_view_background"
-                    android:fontFamily="@font/generalsans_semibold"
-                    android:textColor="@color/dark_gray"
-                    android:textSize="15sp" />
 
 
             </LinearLayout>
@@ -197,6 +194,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <TextView
@@ -209,11 +207,13 @@
                     android:textColor="@color/very_dark_gray_mostly_black"
                     android:textSize="18sp" />
 
-                <com.mcdev.quantitizerlibrary.HorizontalQuantitizer
-                    android:id="@+id/quantity_stepper"
+
+                <include
+                    android:id="@+id/inc_counter"
+                    layout="@layout/item_counter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp" />
+                    android:layout_marginStart="25dp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -251,25 +251,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/generalsans_semibold"
-                android:text="275"
                 android:textAlignment="center"
                 android:textColor="@color/very_dark_gray_mostly_black"
                 android:textSize="20sp" />
         </LinearLayout>
 
-        <com.apachat.loadingbutton.core.customViews.CircularProgressButton
+        <Button
             android:id="@+id/btn_add_to_cart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:background="@drawable/item_circular_button_background"
             android:fontFamily="@font/generalsans_semibold"
-            android:paddingHorizontal="15dp"
+            android:paddingHorizontal="25dp"
             android:text="@string/add_to_cart"
             android:textAllCaps="false"
-            android:textColor="@color/white"
-            app:spinning_bar_color="@color/white"
-            app:spinning_bar_width="3dp"
+            app:backgroundTint="@null"
             tools:ignore="RelativeOverlap" />
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

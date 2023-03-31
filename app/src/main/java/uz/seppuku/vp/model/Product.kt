@@ -12,6 +12,7 @@ data class Product(
     val product_name: String? = null,
     val product_description: String? = null,
     val product_price: String? = null,
+    val product_discount_price: String? = null,
     val product_unit_of_measurement: String? = null,
     val product_rating: Double? = null,
     val product_sold: String? = null,

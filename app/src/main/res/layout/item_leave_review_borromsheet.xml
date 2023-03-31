@@ -109,7 +109,6 @@
                         android:text="$445.00"
                         android:textColor="@color/very_dark_gray_mostly_black"
                         android:textSize="18sp" />
-
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>

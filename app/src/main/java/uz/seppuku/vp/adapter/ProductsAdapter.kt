@@ -20,7 +20,7 @@ class ProductsAdapter(
 ) : ListAdapter<Product, ProductsAdapter.ViewHolder>(DiffCallback()) {
 
 
-    val TAG: String = ProductsAdapter::class.java.simpleName
+    val TAG: String = "ProductsAdapter"
     private lateinit var binding: ItemProductBinding
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         binding = ItemProductBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -41,7 +41,7 @@ class ProductsAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(product: Product) {
 
-            with(product) {
+            product.apply {
 
                 //price
                 binding.tvPrice.text = "$product_price So'm"

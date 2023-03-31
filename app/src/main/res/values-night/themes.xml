@@ -21,4 +21,19 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/very_dark_blue_mostly_black</item>
     </style>
+
+
+    //button
+    <style name="RoundedButton.Main" parent="Theme.MaterialComponents.DayNight">
+        <item name="backgroundColor">@color/white</item>
+        <item name="android:textColor">@color/very_dark_blue_mostly_black</item>
+        <item name="cornerRadius">25dp</item>
+        <item name="fontFamily">@font/generalsans_semibold</item>
+    </style>
+
+    <style name="RoundedButton.Secondary" parent="Theme.MaterialComponents.DayNight">
+        <item name="colorAccent">@color/very_dark_grayish_blue</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">25dp</item>
+    </style>
 </resources>
