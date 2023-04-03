@@ -19,6 +19,7 @@ import uz.seppuku.vp.databinding.FragmentDetailsBinding
 import uz.seppuku.vp.model.Image
 import uz.seppuku.vp.model.Product
 import uz.seppuku.vp.viewmodel.HomeViewModel
+
 @AndroidEntryPoint
 class DetailsFragment : Fragment(R.layout.fragment_details) {
 
@@ -39,7 +40,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     override fun onResume() {
         super.onResume()
 
-       // viewModel.getSingleProduct()
+        // viewModel.getSingleProduct()
 
     }
 
@@ -77,15 +78,15 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 tvPrice.text = "$product_price So'm"
                 tvTotalPrice.text = "$product_price So'm"
                 //image
-              product_image?.let { setupViewPager(it) }
+                product_image?.let { setupViewPager(it) }
                 //rating
                 tvRating.text = product_rating.toString()
                 //solds
                 tvSold.text = product_sold + " " + getString(R.string.sold)
                 //title
-               tvTitle.text = product_name
+                tvTitle.text = product_name
                 //description
-               tvDescription.text = product_description
+                tvDescription.text = product_description
                 if (product_description?.length!! > 70)
                     makeTextViewResizable(
                         binding.tvDescription,
@@ -99,7 +100,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
     private fun setupViewPager(images: ArrayList<Image>) {
 
-      val viewPagerAdapter = ViewPagerAdapter(images, requireContext())
+        val viewPagerAdapter = ViewPagerAdapter(images, requireContext())
 
         binding.apply {
             viewpager.currentItem = 0
@@ -110,7 +111,6 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
             viewpager.getChildAt(0).overScrollMode = View.OVER_SCROLL_NEVER
             binding.dotsIndicator.attachTo(binding.viewpager)
         }
-
 
 
     }
@@ -183,6 +183,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         }
         return ssb
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
