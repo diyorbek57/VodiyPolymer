@@ -65,13 +65,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx'
     //lifecycle
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
     //coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.4'
     //fragment
-    implementation 'androidx.fragment:fragment-ktx:1.5.5'
+    implementation 'androidx.fragment:fragment-ktx:1.5.6'
     //navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
@@ -94,8 +94,7 @@ dependencies {
     implementation 'com.github.shuhart:stickyheader:1.1.0'
     //dot indicator
     implementation 'com.tbuonomo:dotsindicator:4.3'
-    //count stemmer
-    implementation "com.github.kojofosu:Quantitizer:1.6.7"
+
     //rating bar
     implementation 'com.github.ome450901:SimpleRatingBar:1.5.1'
     //toast

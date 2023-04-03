@@ -91,11 +91,6 @@
                     android:textColor="@color/very_dark_gray_mostly_black"
                     android:textSize="16sp" />
 
-                <com.mcdev.quantitizerlibrary.HorizontalQuantitizer
-                    android:id="@+id/quantity_stepper"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true" />
             </RelativeLayout>
 
 

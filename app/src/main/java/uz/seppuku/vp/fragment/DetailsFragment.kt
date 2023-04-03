@@ -98,7 +98,9 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
     private fun setupViewPager(images: ArrayList<Image>) {
+
       val viewPagerAdapter = ViewPagerAdapter(images, requireContext())
+
         binding.apply {
             viewpager.currentItem = 0
             viewpager.offscreenPageLimit = 3

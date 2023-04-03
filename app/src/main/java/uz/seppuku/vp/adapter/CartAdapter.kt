@@ -11,9 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.database.*
-import com.mcdev.quantitizerlibrary.AnimationStyle
-import com.mcdev.quantitizerlibrary.HorizontalQuantitizer
-import com.mcdev.quantitizerlibrary.QuantitizerListener
+
 import uz.seppuku.vp.databinding.ItemCartBinding
 import uz.seppuku.vp.model.Cart
 import uz.seppuku.vp.model.Product
@@ -66,30 +64,8 @@ open class CartAdapter(
         })
     }
 
-    fun setupQuantityStepper(quantityStepper: HorizontalQuantitizer, product: Cart) {
-        quantityStepper.textAnimationStyle = AnimationStyle.SWING
-        quantityStepper.isReadOnly = false
-        quantityStepper.setValueBackgroundColor(R.color.gray)
-        quantityStepper.setMinusIconColor(R.color.very_dark_gray_mostly_black)
-        quantityStepper.setPlusIconColor(R.color.very_dark_gray_mostly_black)
-        quantityStepper.setPlusIconBackgroundColor(R.color.gray)
-        quantityStepper.setMinusIconBackgroundColor(R.color.gray)
-        quantityStepper.minValue = 1
-        quantityStepper.maxValue = 255
-        quantityStepper.setIconWidthAndHeight(45, 45)
-        quantityStepper.value = product.cart_product_total_quantity?.toInt()!!
-        quantityStepper.setQuantitizerListener(object : QuantitizerListener {
-            override fun onIncrease() {
-            }
+    fun setupQuantityStepper() {
 
-            override fun onDecrease() {
-
-            }
-
-            override fun onValueChanged(value: Int) {
-                changeQuantity(value, product.cart_id)
-            }
-        })
     }
 
     private fun changeQuantity(value: Int, productId: String?) {
@@ -185,7 +161,6 @@ open class CartAdapter(
                     binding.tvDescription.text = product_description
                     binding.tvTitle.text = product_name
                     binding.tvPrice.text = "$cart_product_total_price So'm"
-                    setupQuantityStepper(binding.quantityStepper, cart)
 
                 }
             }
