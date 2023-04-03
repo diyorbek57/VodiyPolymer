@@ -56,10 +56,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".fragment.DetailsFragment"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.NotificationActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

@@ -42,15 +42,13 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    val TAG: String = HomeFragment::class.java.simpleName
+    val TAG: String = "HomeFragment"
     private val viewModel by viewModels<HomeViewModel>()
 
     //adapter
     var productsAdapter: ProductsAdapter? = null
 
-
     //variables
-    lateinit var product: Product
     private var shortAnimationDuration: Int = 0
 
 
@@ -58,20 +56,20 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentHomeBinding.bind(view)
         shortAnimationDuration = resources.getInteger(android.R.integer.config_shortAnimTime)
-        productsAdapter = ProductsAdapter(requireContext(), this)
 
         inits()
     }
 
     override fun onResume() {
         super.onResume()
-
         viewModel.getAllProducts()
-
     }
 
     @SuppressLint("SimpleDateFormat")
     private fun inits() {
+        // init product adapter
+        productsAdapter = ProductsAdapter(requireContext(), this)
+
         initUI()
         observer()
 
@@ -79,6 +77,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
     }
 
     private fun initUI() {
+
         binding.apply {
 
             rvProducts.layoutManager = GridLayoutManager(
@@ -154,20 +153,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
 
 
     override fun onPostItemClickListener(id: String, binding: ItemProductBinding) {
-        val intent = Intent(requireContext(), DetailsFragment::class.java)
-        intent.putExtra("id", id)
-        val imagePair = create<View, String>(binding.ivImage, "image_field")
-        val titlePair = create<View, String>(binding.tvTitle, "title_field")
-        val pricePair = create<View, String>(binding.tvPrice, "price_field")
-        val ratingPair = create<View, String>(binding.llRating, "rating_field")
-        val soldsPair = create<View, String>(binding.tvSold, "solds_field")
 
-        val options =
-            ActivityOptions.makeSceneTransitionAnimation(
-                requireActivity(),
-                imagePair
-            )
-        startActivity(intent, options.toBundle())
+        val extras = FragmentNavigatorExtras(binding.ivImage to "image")
+       findNavController().navigate(R.id.action_nav_home_to_detailsFragment, null, null, extras)
     }
 
     override fun onCategoryItemClickListener(id: String) {

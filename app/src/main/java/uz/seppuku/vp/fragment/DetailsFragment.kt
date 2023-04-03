@@ -6,34 +6,20 @@ import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
-import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.viewpager2.widget.ViewPager2
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.mcdev.quantitizerlibrary.AnimationStyle
-import com.mcdev.quantitizerlibrary.QuantitizerListener
+import dagger.hilt.android.AndroidEntryPoint
 import uz.seppuku.afeme.helper.CustomSpannable
 import uz.seppuku.vp.R
 import uz.seppuku.vp.adapter.ViewPagerAdapter
 import uz.seppuku.vp.databinding.FragmentDetailsBinding
-import uz.seppuku.vp.databinding.FragmentHomeBinding
-import uz.seppuku.vp.manager.UserPrefManager
-import uz.seppuku.vp.model.Cart
 import uz.seppuku.vp.model.Image
 import uz.seppuku.vp.model.Product
-import uz.seppuku.vp.utils.Utils
 import uz.seppuku.vp.viewmodel.HomeViewModel
-import java.math.BigDecimal
-
+@AndroidEntryPoint
 class DetailsFragment : Fragment(R.layout.fragment_details) {
 
 
@@ -41,11 +27,6 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private val binding get() = _binding!!
     val TAG: String = "DetailsFragment"
     private val viewModel by viewModels<HomeViewModel>()
-
-    //variables
-    private var viewPager: ViewPager2? = null
-    lateinit var viewPagerAdapter: ViewPagerAdapter
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -117,15 +98,19 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
     private fun setupViewPager(images: ArrayList<Image>) {
-        viewPagerAdapter = ViewPagerAdapter(images, requireContext())
-        viewPager?.currentItem = 0
-        viewPager = binding.viewpager
-        viewPager?.offscreenPageLimit = 3
-        viewPager!!.adapter = viewPagerAdapter
-        viewPager!!.clipToPadding = false
-        viewPager!!.clipChildren = false
-        viewPager!!.getChildAt(0).overScrollMode = View.OVER_SCROLL_NEVER
-        binding.dotsIndicator.attachTo(binding.viewpager)
+      val viewPagerAdapter = ViewPagerAdapter(images, requireContext())
+        binding.apply {
+            viewpager.currentItem = 0
+            viewpager.offscreenPageLimit = 3
+            viewpager.adapter = viewPagerAdapter
+            viewpager.clipToPadding = false
+            viewpager.clipChildren = false
+            viewpager.getChildAt(0).overScrollMode = View.OVER_SCROLL_NEVER
+            binding.dotsIndicator.attachTo(binding.viewpager)
+        }
+
+
+
     }
 
     private fun makeTextViewResizable(
@@ -196,5 +181,8 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         }
         return ssb
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

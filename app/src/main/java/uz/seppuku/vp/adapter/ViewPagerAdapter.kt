@@ -1,6 +1,7 @@
 package uz.seppuku.vp.adapter
 
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import uz.seppuku.vp.databinding.ItemViewPagerBinding
 import uz.seppuku.vp.model.Image
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions
 
 
 class ViewPagerAdapter(
@@ -24,6 +26,7 @@ class ViewPagerAdapter(
         return ItemPostViewPagerViewHolder(binding)
     }
 
+    @SuppressLint("CheckResult")
     override fun onBindViewHolder(holder: ItemPostViewPagerViewHolder, position: Int) {
 
         with(holder) {
@@ -31,7 +34,9 @@ class ViewPagerAdapter(
                     Glide.with(context)
                         .load(image_url)
                         .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(binding.ivViewpager)
+                        .into(binding.ivViewpager).apply {
+                            RequestOptions().dontTransform()
+                        }
 
 
             }
