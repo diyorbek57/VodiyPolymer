@@ -154,8 +154,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), ProductsAdapter.OnPostIte
 
     override fun onPostItemClickListener(id: String, binding: ItemProductBinding) {
 
-        val extras = FragmentNavigatorExtras(binding.ivImage to "image")
-       findNavController().navigate(R.id.action_nav_home_to_detailsFragment, null, null, extras)
+       findNavController().navigate(HomeFragmentDirections.actionNavHomeToDetailsFragment(id))
     }
 
     override fun onCategoryItemClickListener(id: String) {

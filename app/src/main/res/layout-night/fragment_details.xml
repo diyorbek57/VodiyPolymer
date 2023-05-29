@@ -30,9 +30,9 @@
                     android:id="@+id/viewpager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:transitionName="image"
                     android:background="@color/very_dark_grayish_blue"
-                    android:orientation="horizontal" />
+                    android:orientation="horizontal"
+                    android:transitionName="image" />
 
                 <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
                     android:id="@+id/dots_indicator"
@@ -269,6 +269,6 @@
             android:text="@string/add_to_cart"
             android:textAllCaps="false"
             app:backgroundTint="@null"
-            tools:ignore="RelativeOverlap"/>
+            tools:ignore="RelativeOverlap" />
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

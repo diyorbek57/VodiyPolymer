@@ -1,6 +1,7 @@
 package uz.seppuku.vp.fragment
 
 import android.annotation.SuppressLint
+import android.graphics.Paint
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -11,13 +12,17 @@ import android.view.ViewTreeObserver
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import uz.seppuku.afeme.helper.CustomSpannable
 import uz.seppuku.vp.R
 import uz.seppuku.vp.adapter.ViewPagerAdapter
 import uz.seppuku.vp.databinding.FragmentDetailsBinding
+import uz.seppuku.vp.helper.ResizableTextView
 import uz.seppuku.vp.model.Image
 import uz.seppuku.vp.model.Product
+import uz.seppuku.vp.utils.Logger
+import uz.seppuku.vp.utils.Resource
 import uz.seppuku.vp.viewmodel.HomeViewModel
 
 @AndroidEntryPoint
@@ -29,6 +34,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     val TAG: String = "DetailsFragment"
     private val viewModel by viewModels<HomeViewModel>()
 
+    private val args: DetailsFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -39,20 +45,40 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
     override fun onResume() {
         super.onResume()
-
-        // viewModel.getSingleProduct()
+        viewModel.getSingleProduct(args.productId)
 
     }
 
     private fun inits() {
         initUI()
         setupQuantityStepper()
+        observer()
+    }
 
+    private fun observer() {
+        viewModel.product.observe(viewLifecycleOwner) {
+            when (it.status) {
+                Resource.Status.SUCCESS -> {
+                    it.data?.let { it1 -> displayProduct(it1) }
+                    //  Utils.hideLoading(binding.progressBar)
+                }
+
+                Resource.Status.ERROR -> {
+                    it.message?.let { it1 -> Logger.e(TAG, it1) }
+                    //  Utils.hideLoading(binding.progressBar)
+                }
+
+                Resource.Status.LOADING -> {
+                    //  Utils.showLoading(binding.progressBar)
+                }
+            }
+        }
     }
 
     private fun initUI() {
-        binding.apply {
 
+
+        binding.apply {
             btnAddToCart.setOnClickListener {
 
             }
@@ -75,7 +101,17 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
 
                 //price
-                tvPrice.text = "$product_price So'm"
+                if (product_discount.isNullOrEmpty()) {
+                    llDiscount?.visibility = View.GONE
+                    tvDicountPrice?.text = "$product_price So'm"
+                } else {
+
+                    tvPrice.paintFlags  = tvPrice.paintFlags.or(Paint.STRIKE_THRU_TEXT_FLAG)
+                    tvDicountPrice?.text = "$product_discount_price So'm"
+                    tvPrice.text = "$product_price"
+                    tvDiscount?.text = "-$product_discount %"
+                }
+
                 tvTotalPrice.text = "$product_price So'm"
                 //image
                 product_image?.let { setupViewPager(it) }
@@ -88,7 +124,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 //description
                 tvDescription.text = product_description
                 if (product_description?.length!! > 70)
-                    makeTextViewResizable(
+                    ResizableTextView(requireContext()).makeTextViewResizable(
                         binding.tvDescription,
                         3,
                         getString(R.string.view_more),
@@ -115,74 +151,6 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
     }
 
-    private fun makeTextViewResizable(
-        tv: TextView,
-        maxLine: Int,
-        expandText: String,
-        viewMore: Boolean
-    ) {
-        if (tv.tag == null) {
-            tv.tag = tv.text
-        }
-        val vto: ViewTreeObserver = tv.viewTreeObserver
-        vto.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                val text: String
-                val lineEndIndex: Int
-                val obs: ViewTreeObserver = tv.viewTreeObserver
-                obs.removeOnGlobalLayoutListener(this)
-                if (maxLine == 0) {
-                    lineEndIndex = tv.layout.getLineEnd(0)
-                    text = tv.text.subSequence(0, lineEndIndex - expandText.length + 1)
-                        .toString() + " " + expandText
-                } else if (maxLine > 0 && tv.lineCount >= maxLine) {
-                    lineEndIndex = tv.layout.getLineEnd(maxLine - 1)
-                    text = tv.text.subSequence(0, lineEndIndex - expandText.length + 1)
-                        .toString() + " " + expandText
-                } else {
-                    lineEndIndex = tv.layout.getLineEnd(tv.layout.lineCount - 1)
-                    text = tv.text.subSequence(0, lineEndIndex).toString() + " " + expandText
-                }
-                tv.text = text
-                tv.movementMethod = LinkMovementMethod.getInstance()
-                tv.setText(
-                    addClickablePartTextViewResizable(
-                        SpannableString(tv.text.toString()), tv, lineEndIndex, expandText,
-                        viewMore
-                    ), TextView.BufferType.SPANNABLE
-                )
-            }
-        })
-    }
-
-
-    private fun addClickablePartTextViewResizable(
-        strSpanned: Spanned,
-        tv: TextView,
-        maxLine: Int,
-        spanableText: String,
-        viewMore: Boolean
-    ): SpannableStringBuilder? {
-        val str = strSpanned.toString()
-        val ssb = SpannableStringBuilder(strSpanned)
-
-        if (str.contains(spanableText)) {
-            ssb.setSpan(object : CustomSpannable(false) {
-                override fun onClick(widget: View) {
-                    super.onClick(widget)
-                    tv.layoutParams = tv.layoutParams
-                    tv.setText(tv.tag.toString(), TextView.BufferType.SPANNABLE)
-                    tv.invalidate()
-                    if (viewMore) {
-                        makeTextViewResizable(tv, -1, getString(R.string.view_less), false)
-                    } else {
-                        makeTextViewResizable(tv, 3, getString(R.string.view_more), true)
-                    }
-                }
-            }, str.indexOf(spanableText), str.indexOf(spanableText) + spanableText.length, 0)
-        }
-        return ssb
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
