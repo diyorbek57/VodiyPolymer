@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Context.WINDOW_SERVICE
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.drawable.Drawable
 import android.location.Geocoder
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -25,11 +26,16 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
+import kotlinx.serialization.descriptors.PrimitiveKind
 import uz.seppuku.vp.R
+import uz.seppuku.vp.databinding.ItemEmptyStateBinding
 import uz.seppuku.vp.model.helpermodel.CustomLocation
 import uz.seppuku.vp.model.helpermodel.ScreenSize
+import uz.seppuku.vp.utils.Extensions.show
 import www.sanju.motiontoast.MotionToast
 import www.sanju.motiontoast.MotionToastStyle
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -255,12 +261,47 @@ object Utils {
         resources.updateConfiguration(config, resources.displayMetrics)
         return config
     }
-fun showLoading(progressBar: ProgressBar){
-    progressBar.visibility =View.VISIBLE
-}
 
-    fun hideLoading(progressBar: ProgressBar){
-        progressBar.visibility =View.GONE
+    //    fun prettyCount(number: Number): String? {
+//        val suffix = arrayOf(' ', "ming", "", 'B', 'T', 'P', 'E')
+//        val numValue = number.toLong()
+//        val value = Math.floor(Math.log10(numValue.toDouble())).toInt()
+//        val base = value / 3
+//        return if (value >= 3 && base < suffix.size) {
+//            DecimalFormat("#0.0").format(
+//                numValue / Math.pow(
+//                    10.0,
+//                    (base * 3).toDouble()
+//                )
+//            ) + suffix[base]
+//        } else {
+//            DecimalFormat("#,##0").format(numValue)
+//        }
+//    }
+    fun addSpaceToNumber(number: String): String {
+        val dec = DecimalFormat("###,###,###,###,###", DecimalFormatSymbols(Locale.ENGLISH))
+        return dec.format(number.toInt()).replace(",", " ")
+    }
+
+    fun showLoading(progressBar: ProgressBar) {
+        progressBar.visibility = View.VISIBLE
+    }
+
+    fun hideLoading(progressBar: ProgressBar) {
+        progressBar.visibility = View.GONE
+    }
+
+    fun showEmptyState(
+        emptyState: ItemEmptyStateBinding,
+        visibility: Int,
+        image: Int,
+        title: String,
+        message: String
+    ) {
+        emptyState.llEmpty.visibility = visibility
+        emptyState.ivImageEmptyState.setImageResource(image)
+        emptyState.tvTitleEmptyState.text = title
+        emptyState.tvMessageEmptyState.text = message
     }
 
 }

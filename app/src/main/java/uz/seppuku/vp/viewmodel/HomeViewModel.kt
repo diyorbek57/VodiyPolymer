@@ -9,6 +9,7 @@ import com.google.firebase.firestore.ktx.toObject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import uz.seppuku.vp.model.Cart
 import uz.seppuku.vp.model.Category
 import uz.seppuku.vp.model.Product
 import uz.seppuku.vp.utils.Logger
@@ -22,6 +23,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     val TAG = "HomeViewModel"
+
     //category list livedata
     private var _category = SingleLiveEvent<Resource<List<Category>>>()
     val category: LiveData<Resource<List<Category>>> get() = _category
@@ -34,14 +36,18 @@ class HomeViewModel @Inject constructor(
     private var _product = SingleLiveEvent<Resource<Product>>()
     val product: LiveData<Resource<Product>> get() = _product
 
+    // add to cart livedata
+    private var _addToCart = SingleLiveEvent<Resource<Boolean>>()
+    val addToCart: LiveData<Resource<Boolean>> get() = _addToCart
+
     //list for put products from database
-   private val productsList = ArrayList<Product>()
+    private val productsList = ArrayList<Product>()
 
     //list for put categories from database
-  private  val categoriesList = ArrayList<Category>()
+    private val categoriesList = ArrayList<Category>()
 
     //object for get single product and return it
-  private  var singleProduct = Product()
+    private var singleProduct = Product()
 
     fun getAllProducts() = viewModelScope.launch(Dispatchers.IO) {
         try {
@@ -111,7 +117,6 @@ class HomeViewModel @Inject constructor(
                     if (!documents.isEmpty) {
 
                         for (document in documents.documents) {
-
                             singleProduct = document.toObject<Product>()!!
                         }
 
@@ -153,6 +158,21 @@ class HomeViewModel @Inject constructor(
                 .addOnFailureListener { exception ->
                     Logger.e(TAG, "get failed with $exception")
                     _category.postValue(Resource.error(exception.message.toString()))
+                }
+        } catch (e: Exception) {
+            e.localizedMessage ?: "error"
+        }
+    }
+
+    fun addProductToCart(cartProduct: Cart) = viewModelScope.launch(Dispatchers.IO) {
+        try {
+            _addToCart.postValue(Resource.loading())
+            database.collection("carts").document(cartProduct.cart_id.toString())
+                .set(cartProduct)
+                .addOnCompleteListener {
+                    _addToCart.postValue(Resource.success(true))
+                }.addOnFailureListener {
+                    _addToCart.postValue(Resource.error(it.message.toString()))
                 }
         } catch (e: Exception) {
             e.localizedMessage ?: "error"

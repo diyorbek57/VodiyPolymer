@@ -65,7 +65,7 @@ class CompletedOrdersFragment : Fragment(), CompletedOrdersAdapter.OnActionButto
 
                         product = userSnapshot.getValue(Order::class.java)!!
                         Logger.e(TAG,product.toString())
-                        if (product != null) {
+                        if ( product != null) {
                             if (product.order_step == 3 && product.order_isOrdered)
                                 productsList.add(product)
                         }

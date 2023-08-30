@@ -16,6 +16,7 @@ data class Product(
     val product_unit_of_measurement: String? = null,
     val product_rating: String? = null,
     val product_sold: String? = null,
+    val product_out_of_stock: Boolean? = null,
     val product_discount: String? = null,
     val product_image: ArrayList<Image>? = null,
     val product_created_at: String? = null,

@@ -19,6 +19,9 @@
     <uses-feature
         android:name="android.hardware.location.gps"
         android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
     <uses-permission
         android:name="android.permission.MANAGE_DOCUMENTS"
@@ -62,8 +65,7 @@
         <activity
             android:name=".activity.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

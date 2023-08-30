@@ -51,7 +51,7 @@
                     android:maxEms="10"
                     android:maxLines="1"
                     android:text="@string/dummy_text"
-                    android:textColor="@color/very_dark_gray_mostly_black"
+                    android:textColor="@color/white"
                     android:textSize="18sp" />
 
                 <ImageView
@@ -72,21 +72,22 @@
                 android:fontFamily="@font/generalsans_medium"
                 android:maxLines="2"
                 android:text="@string/dummy_text"
-                android:textColor="@color/very_dark_gray_mostly_black"
+                android:textColor="@color/white"
                 android:textSize="16sp" />
 
 
-            <TextView
-                android:id="@+id/tv_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/generalsans_semibold"
-                android:maxLength="16"
-                android:layout_marginVertical="5dp"
-                android:text="@string/dummy_text"
-                android:textColor="@color/very_dark_gray_mostly_black"
-                android:textSize="16sp" />
+                <TextView
 
+                    android:id="@+id/tv_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:fontFamily="@font/generalsans_semibold"
+                    android:maxLength="16"
+                    android:layout_marginVertical="5dp"
+                    android:text="@string/dummy_text"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
 
             <uz.seppuku.vp.helper.quantitizer.Quantitizer
                 android:layout_width="wrap_content"

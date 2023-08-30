@@ -8,6 +8,7 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.TextView
+import androidx.core.widget.NestedScrollView
 import uz.seppuku.afeme.helper.CustomSpannable
 import uz.seppuku.vp.R
 
@@ -73,6 +74,7 @@ class ResizableTextView(val context: Context) {
                     tv.invalidate()
                     if (viewMore) {
                         makeTextViewResizable(tv, -1, context.getString(R.string.view_less), false)
+                       // scrollView.fullScroll(View.FOCUS_UP)
                     } else {
                         makeTextViewResizable(tv, 3, context.getString(R.string.view_more), true)
                     }
