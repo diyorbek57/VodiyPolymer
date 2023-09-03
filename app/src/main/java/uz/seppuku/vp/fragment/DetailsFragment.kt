@@ -44,6 +44,8 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     private lateinit var counter: Quantitizer
     private lateinit var currentProduct: Product
     private lateinit var price: String
+    private lateinit var totalPrice: String
+    private lateinit var totalQuantity: String
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentDetailsBinding.bind(view)
@@ -69,19 +71,20 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 Resource.Status.SUCCESS -> {
                     it.data?.let { it1 -> displayProduct(it1) }
                     currentProduct = it.data!!
+
                     binding.progressBar?.let { it1 -> Utils.hideLoading(it1) }
-                    binding.coordinator.visibility  = View.VISIBLE
+                    binding.coordinator.visibility = View.VISIBLE
                 }
 
                 Resource.Status.ERROR -> {
                     it.message?.let { it1 -> Logger.e(TAG, it1) }
                     binding.progressBar?.let { it1 -> Utils.hideLoading(it1) }
-                    binding.coordinator.visibility  = View.GONE
+                    binding.coordinator.visibility = View.GONE
                 }
 
                 Resource.Status.LOADING -> {
                     binding.progressBar?.let { it1 -> Utils.showLoading(it1) }
-                    binding.coordinator.visibility  = View.GONE
+                    binding.coordinator.visibility = View.GONE
                 }
             }
         }
@@ -126,29 +129,45 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
     }
 
     private fun addToCart() {
-viewModel.addProductToCart(Cart(cart_id = Utils.getUUID(), cart_product_id = currentProduct.product_id,cart_user_id = UserPrefManager(requireContext()).loadUser()!!.user_id,cart))
+        viewModel.addProductToCart(
+            Cart(
+                cart_id = Utils.getUUID(),
+                cart_product_id = currentProduct.product_id,
+                cart_user_id = UserPrefManager(requireContext()).loadUser()!!.user_id,
+                cart_product_total_price = totalPrice,
+                cart_product_total_quantity = totalQuantity,
+                cart_product_created_at = Utils.getCurrentTime(),
+                cart_product_updated_at = Utils.getCurrentTime()
+            )
+        )
     }
 
     @SuppressLint("SetTextI18n")
     private fun displayProduct(product: Product) {
         product.apply {
             binding.apply {
-                if (product_price != null) {
-                    price = product_price
-                }
                 //price
                 if (product_discount.isNullOrEmpty()) {
                     llDiscount.visibility = View.GONE
-                    tvDicountPrice.text =  product_price?.let { Utils.addSpaceToNumber(it) }+" So'm"
+                    tvDicountPrice.text =
+                        product_price?.let { Utils.addSpaceToNumber(it) } + " So'm"
+
+                    if (product_price != null) {
+                        price = product_price
+                    }
                 } else {
 
                     tvPrice.paintFlags = tvPrice.paintFlags.or(Paint.STRIKE_THRU_TEXT_FLAG)
-                    tvDicountPrice.text =  product_discount_price?.let { Utils.addSpaceToNumber(it) } +" So'm"
+                    tvDicountPrice.text =
+                        product_discount_price?.let { Utils.addSpaceToNumber(it) } + " So'm"
                     tvPrice.text = "$product_price"
                     tvDiscount.text = "-$product_discount %"
+                    if (product_discount_price != null) {
+                        price = product_discount_price
+                    }
                 }
 
-                tvTotalPrice.text =  product_price?.let { Utils.addSpaceToNumber(it) }+" So'm"
+                tvTotalPrice.text = product_price?.let { Utils.addSpaceToNumber(it) } + " So'm"
                 //image
                 product_image?.let { setupViewPager(it) }
                 //rating
@@ -170,10 +189,10 @@ viewModel.addProductToCart(Cart(cart_id = Utils.getUUID(), cart_product_id = cur
 //
 //
 //                    }
-                }
-
             }
+
         }
+    }
 
 
     private fun setupQuantityStepper() {
@@ -184,6 +203,9 @@ viewModel.addProductToCart(Cart(cart_id = Utils.getUUID(), cart_product_id = cur
             }
 
             override fun onValueChanged(value: Int) {
+
+                totalPrice = price.toInt().times(value).toString()
+                totalQuantity = value.toString()
                 changeAmout(value)
             }
 
@@ -200,7 +222,7 @@ viewModel.addProductToCart(Cart(cart_id = Utils.getUUID(), cart_product_id = cur
     @SuppressLint("SetTextI18n")
     private fun changeAmout(value: Int) {
         binding.tvTotalPrice.text =
-            price.toInt().times(value).toString().let { Utils.addSpaceToNumber(it) } +" So'm"
+            price.toInt().times(value).toString().let { Utils.addSpaceToNumber(it) } + " So'm"
 
     }
 
